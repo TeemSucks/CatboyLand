@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "username": "sin",
+        "password": "$2b$10$kuAb/MhJMZvSXJrsuHJ7oO9XeAQFk6cUEymNg195QpMwZbbmwEnA6",
+        "token": "MXNpbiQyYiQxMCRrdUFiL01oSk1adlNYSnJzdUhKN29POVhlQVFGazZjVUV5bU5nMTk1UXBNd1piYm13RW5BNg=="
+    },
+    {
+        "id": 2,
+        "username": "Ilovecock",
+        "password": "$2b$10$HWqsbk3iyzlvJwZuIcwyPere1TqyZHQOT0uFUkT7lYya2NKtFdfTu",
+        "token": "Mklsb3ZlY29jayQyYiQxMCRIV3FzYmszaXl6bHZKd1p1SWN3eVBlcmUxVHF5WkhRT1QwdUZVa1Q3bFl5YTJOS3RGZGZUdQ=="
+    },
+    {
+        "id": 3,
+        "username": "a",
+        "password": "$2b$10$40Pg5ZE4IprGv0MiKAc0EuoubyBDMFDCGyWMIMjGGAq3nZUNAOuzW",
+        "token": "M2EkMmIkMTAkNDBQZzVaRTRJcHJHdjBNaUtBYzBFdW91YnlCRE1GRENHeVdNSU1qR0dBcTNuWlVOQU91elc="
+    }
+]

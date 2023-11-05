@@ -1,0 +1,195 @@
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const crypto = require('crypto');
+const Base64 = require('js-base64');
+
+const app = express();
+const port = 3000;
+
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.static('public'));
+
+// Function to generate a token based on id, username, and password
+function generateToken(id, username, password) {
+  const token = Base64.encode(`${id}${username}${password}`);
+  return `${token}`
+  // return `${id}${username}${password}`;
+}
+
+// Load user data from users.json file
+let users = [];
+if (fs.existsSync('users.json')) {
+    users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
+}
+
+app.set('view engine', 'ejs');
+
+// Login Page
+app.get('/login', (req, res) => {
+  const token = req.cookies.token;
+
+  if (token) {
+      const user = users.find((u) => u.token === token);
+      if (user) {
+          return res.redirect('/home');
+      }
+  }
+
+    res.render('login');
+});
+
+app.get('/', (req, res) => {
+    res.redirect('login');
+});
+
+// Login API
+app.post('/api/login', (req, res) => {
+  // Authenticate user (replace with your authentication logic)
+  const { username, password } = req.body;
+  const user = users.find((u) => u.username === username && u.password === password);
+
+  if (!user) {
+      return res.status(401).json({ success: false, message: 'Authentication failed' });
+  }
+
+  // Retrieve the user's token from users.json
+  const storedUser = users.find((u) => u.id === user.id);
+
+  if (!storedUser || !storedUser.token) {
+      return res.status(401).json({ success: false, message: 'Token not found' });
+  }
+
+  const token = storedUser.token;
+
+  res.cookie('token', token, { httpOnly: true });
+
+  // Send a success response
+  res.json({ success: true });
+});
+
+// Signup Page
+app.get('/signup', (req, res) => {
+  const token = req.cookies.token;
+
+  if (token) {
+      const user = users.find((u) => u.token === token);
+      if (user) {
+          return res.redirect('/home');
+      }
+  }
+
+    res.render('signup');
+});
+
+app.get('/settings', (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+      return res.redirect('/login');
+  }
+
+  const user = users.find((u) => u.token === token);
+  if (!user) {
+    return res.redirect('/login');
+}
+
+    res.render('settings');
+});
+
+app.delete('/api/delete/account/:userId', (req, res) => {
+    const userId = parseInt(req.params.userId);
+    const { token } = req.headers;
+
+    // Find the user with the given userId in your user data (replace with database query)
+    const user = users.find(user => user.id === userId);
+
+    if (!user) {
+        // If the user doesn't exist, send a 404 (Not Found) response
+        return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    // Check if the provided token matches the user's token
+    if (token !== generateToken(user.id, user.username, user.password)) {
+        // If the token is invalid, send a 401 (Unauthorized) response
+        return res.status(401).json({ success: false, message: 'Unauthorized. Invalid token.' });
+    }
+
+    // Remove the user from the array of users
+    const userIndex = users.indexOf(user);
+    users.splice(userIndex, 1);
+
+    // Save the updated user data to users.json
+    fs.writeFileSync('users.json', JSON.stringify(users, null, 4), 'utf8');
+
+    res.redirect('/api/logout'); // Removes the cookies
+
+    res.status(204).send(); // Send a 204 (No Content) response to indicate successful deletion
+});
+
+// Signup API (updated to generate and store the new token)
+app.post('/api/signup', (req, res) => {
+    // Create a new user account (implement your signup logic here)
+    const { username, password } = req.body;
+    // Store user data and perform necessary validation (replace with database operations)
+
+    // Check if the username already exists
+    const userExists = users.some(user => user.username === username);
+
+    if (userExists) {
+        // If the username already exists, send an error response
+        return res.status(409).json({ success: false, message: 'Username already exists.' });
+    }
+
+    // Generate a token for the newly registered user
+    const newUser = { id: users.length + 1, username, password }; // Replace with actual user creation
+    const token = generateToken(newUser.id, newUser.username, newUser.password);
+
+    // Update the user's token
+    newUser.token = token;
+
+    // Add the user to the list of users
+    users.push(newUser);
+
+    // Save the updated user data to users.json
+    fs.writeFileSync('users.json', JSON.stringify(users, null, 4), 'utf8');
+
+    // Set the token in the cookie
+    res.cookie('token', token, { httpOnly: true });
+
+    res.redirect('/home');
+});
+
+// Dashboard Page (requires authentication)
+app.get('/home', (req, res) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.redirect('/login');
+    }
+
+    const user = users.find((u) => u.token === token);
+
+    if (!user) {
+        return res.redirect('/login');
+    }
+
+    res.render('home', { user });
+});
+
+// Logout API (clear the token cookie)
+app.get('/api/logout', (req, res) => {
+    res.clearCookie('token');
+    res.redirect('/login');
+});
+
+// 404 Error Handling Middleware
+app.use((req, res, next) => {
+  res.status(404).render('404', { path: req.path });
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+    console.log('http://eeeeeeee-36474.portmap.host:36474/');
+});
