@@ -1,0 +1,108 @@
+    /* Define background and text colors */
+    body {
+        background-color: #222;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+      
+      /* Header styles */
+      header {
+        background-color: #333;
+        padding: 10px 0;
+      }
+      
+      .headertext {
+        text-align: center;
+        font-size: 24px;
+      }
+      
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+        text-align: center;
+      }
+      
+      nav li {
+        display: inline;
+        margin-right: 20px;
+      }
+      
+      nav a {
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      
+      /* Search styles */
+      .search {
+        background-color: #444;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+      }
+      
+      .search h2 {
+        font-size: 20px;
+      }
+      
+      .textbox {
+        width: 300px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+      }
+      
+      .searchButton {
+        background-color: #007acc;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      
+      /* Container styles */
+      .container {
+        background-color: #333;
+        border-radius: 10px;
+      }
+      
+      .profileContainer {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+      }
+      
+      .profilePicture img {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      
+      #profileUsername {
+        margin-left: 10px;
+        font-size: 24px;
+      }
+      
+      #tag {
+        margin-left: 10px;
+        color: #ffffff;
+      }
+      
+      #profileStatus {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+      
+      h3 {
+        margin-top: 20px;
+        font-size: 20px;
+      }
+      
+      #profileDescription {
+        font-size: 16px;
+      }
+  

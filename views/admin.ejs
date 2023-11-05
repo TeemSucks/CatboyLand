@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatboyLand - Admin</title>
+</head>
+<body>
+    <h1>Admin nerd stuff</h1>
+    <h2>ban people</h2>
+    <form action="/api/ban/:id" method="post" id="banForm">
+        <textarea name="" id="" cols="30" rows="10" placeholder="ids"></textarea>
+        <br />
+        <button>Ban!</button>
+    </form>
+    <h2>delete messages</h2>
+    <form action="/api/delete-message" method="post" id="deleteMessageForm">
+        <textarea name="" id="" cols="30" rows="10" placeholder="ids"></textarea>
+        <br />
+        <button>Delete!</button>
+    </form>
+</body>
+</html>

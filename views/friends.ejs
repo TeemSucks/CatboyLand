@@ -1,0 +1,29 @@
+<% if (user.friends.length > 0) { %>
+    <ul>
+      <% user.friends.forEach(friend => { %>
+        <li>
+          <p><strong><%= friend.username %></strong></p>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>You don't have any friends yet.</p>
+  <% } %>
+
+<% if (user.friendRequests.length > 0) { %>
+    <ul>
+      <% user.friendRequests.forEach(request => { %>
+        <li>
+          <p><strong><%= request.sender.username %></strong> wants to be your friend.</p>
+          <form action="/accept-friend-request/<%= request._id %>" method="post">
+            <button type="submit">Accept</button>
+          </form>
+          <form action="/reject-friend-request/<%= request._id %>" method="post">
+            <button type="submit">Reject</button>
+          </form>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No friend requests at the moment.</p>
+  <% } %>

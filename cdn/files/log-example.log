@@ -1,0 +1,11 @@
+-- example derived from 20-10-2023.log --
+-- https://9bv5rttd-3000.use.devtunnels.ms/privacy --
+
+info: User "catboy" logged in
+info: User "admin" logged in
+info: User "catboy" logged out
+info: User "catboy" was banned
+info: User "catboy" tried to log in but was banned
+info: User "catboy" was unbanned
+info: User "admin" logged out
+info: User "catboy" logged in

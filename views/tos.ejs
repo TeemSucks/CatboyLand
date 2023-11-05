@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatboyLand - TOS</title>
+    <meta content="CatboyLand - TOS" property="og:title" />
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <meta content="CatboyLand TOS" property="og:description" />
+    <meta content="#32a852" data-react-helmet="true" name="theme-color" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            color: #fff;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: #1a1a1a;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .container h1, .container h2, .container h3 {
+            color: #fff;
+        }
+
+        .container p {
+            color: #fff;
+        }
+
+        .container ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .container ul li {
+            margin-bottom: 10px;
+        }
+
+        .container a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .container a:hover {
+            text-decoration: underline;
+        }
+        
+        .title {
+            background-color: #1a1a1a;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CatboyLand</h1>
+        <nav>
+            <ul>
+                <% if (user) { %>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/profile">My Profile</a></li>
+                    <li><a href="/friends">Friends</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/settings">Settings</a></li>
+                    <li><a href="/api/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/signup">Signup</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/tos">TOS</a></li>
+                <% } %>
+              </ul>
+            </nav>
+      </header>
+    <div class="title">
+        <h1>CatboyLand Terms of Service</h1>
+        <h2>Last Updated: October 13, 2023</h2>
+    </div>
+    <div class="container">
+        <section>
+            <h3>1. Account Usage</h3>
+            <p>1.1. CatboyLand allows users to interact with other users' accounts and perform actions on their behalf. However, this privilege comes with responsibilities. You agree not to:</p>
+            <ul>
+                <li>a. Access or use another user's account without their explicit consent.</li>
+                <li>b. Perform actions on another user's account that violate our Community Guidelines or the law.</li>
+                <li>c. Share, distribute, or disclose personal information of other users without their consent.</li>
+            </ul>
+            <p>1.2. You are solely responsible for any actions taken on other users' accounts using CatboyLand. We do not endorse or take responsibility for your actions.</p>
+        </section>
+
+        <section>
+            <h3>2. Privacy</h3>
+            <p>2.1. Your privacy is important to us. Please review our Privacy Policy to understand how we collect, use, and disclose your information.</p>
+        </section>
+
+        <section>
+            <h3>3. User Conduct</h3>
+            <p>3.1. You agree to use CatboyLand responsibly and ethically. You will not:</p>
+            <ul>
+                <li>a. Post or share content that is illegal, harmful, offensive, inappropriate, or violates the rights of others.</li>
+                <li>b. Engage in harassment, discrimination, or any form of harmful behavior towards other users.</li>
+                <li>c. Use CatboyLand for spamming, phishing, or any malicious activities.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>4. Intellectual Property</h3>
+            <p>4.1. All content on CatboyLand, including text, images, graphics, logos, and software, is protected by copyright and other intellectual property laws. You may not use, reproduce, or distribute this content without proper authorization.</p>
+        </section>
+
+        <section>
+            <h3>5. Termination</h3>
+            <p>5.1. We reserve the right to terminate or suspend your account at our discretion if you violate this Agreement, engage in activities that harm other users or our platform, or we feel it is nesesary to do so.</p>
+        </section>
+
+        <section>
+            <h3>6. Disclaimers and Limitations of Liability</h3>
+            <p>6.1. CatboyLand is provided "as is" without any warranties, either express or implied. We do not guarantee the accuracy, availability, or reliability of our services.</p>
+            <p>6.2. To the extent permitted by law, CatboyLand shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from your use of the platform.</p>
+        </section>
+
+        <section>
+            <h3>7. Changes to this Agreement</h3>
+            <p>7.1. We may update this Agreement from time to time. Any changes will be effective upon posting on CatboyLand. You are responsible for reviewing and complying with the updated terms.</p>
+        </section>
+
+        <section>
+            <h3>8. Governing Law</h3>
+            <p>8.1. This Agreement is governed by and construed in accordance with the laws of the United States. Any disputes arising from this Agreement will be subject to the exclusive jurisdiction of the courts in the United States.</p>
+        </section>
+
+        <section>
+            <h3>9. Contact Us</h3>
+            <p>9.1. If you have any questions, concerns, or feedback regarding this Agreement or CatboyLand, please contact us at <a href="mailto:CatboyEXE@cock.li">CatboyEXE@cock.li</a>.</p>
+        </section>
+        <dr />
+        By using CatboyLand, you acknowledge that you have read, understood, and agreed to this Terms of Service Agreement.
+
+    </div>
+</body>
+</html>

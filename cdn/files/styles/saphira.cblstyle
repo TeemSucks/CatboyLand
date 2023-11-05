@@ -1,0 +1,125 @@
+/* Apply the imported fonts */
+body {
+  font-family: 'Orbitron', sans-serif;
+  color: white;
+  font-size: 90%;
+  text-shadow: 2px 2px 3px #FFFFFF, 0 0 25px white, 0 0 5px #FFFFFF;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 120%;
+  color: white;
+  text-shadow: 2px 2px 3px #FFFFFF, 0 0 25px white, 0 0 5px #FFFFFF;
+}
+
+/* Apply background images */
+body {
+  background: url(https://i.ibb.co/qd6s7wG/TuVKD1X.gif);
+  background-size: cover;
+  filter: blur(0.5px) brightness(1);
+}
+
+/* Header Styles */
+header {
+  background: none;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  box-shadow: 0px 0px 5px 3px blue;
+  text-align: center;
+  padding: 10px 0;
+}
+
+header h1 {
+  filter: invert(38%) sepia(43%) saturate(3307%) hue-rotate(198deg) brightness(101%) contrast(101%) !important;
+  box-shadow: 0px 0px 7px 5px white;
+}
+
+nav ul {
+  background: url(https://i.ibb.co/rdm0T2B/26GL4h0.jpg) !important;
+  background-size: 50% !important;
+  background-repeat: no-repeat;
+  margin-bottom: 20px !important;
+  border-radius: 4px;
+  box-shadow: 0px 0px 5px 3px blue;
+  padding: 10px;
+  filter: blur(0.5px);
+}
+
+nav ul li:not(:last-child)::after {
+  content: " ⭒ ";
+  color: white;
+}
+
+/* Search Styles */
+.search {
+  text-align: center;
+  margin-top: 20px;
+  background-color: rgba(0, 0, 255, 0.3);
+  border-radius: 4px;
+  box-shadow: 0px 0px 5px 3px blue;
+}
+
+.search h2 {
+  margin-top: auto;
+}
+
+.search form {
+  margin-top: 20px;
+}
+
+.textbox {
+  background-color: rgba(0, 0, 255, 0.5) !important;
+  border: 1px solid white !important;
+  border-radius: 10px !important;
+  padding: 5px;
+}
+
+.searchButton {
+  border-radius: 10px !important;
+  border: 1px solid white !important;
+  background-color: rgba(0, 0, 255, 0.5) !important;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Profile Container Styles */
+.container {
+  text-align: center;
+  margin-top: 20px;
+  background-color: rgba(62, 62, 255, 0.3) !important;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profilePicture img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+#profileUsername {
+  font-size: 24px;
+  color: white;
+}
+
+/* Status and Description Styles */
+#profileStatus {
+  margin-top: 20px;
+  color: white;
+}
+
+#profileDescription {
+  font-weight: 700;
+  line-height: 1.5;
+  margin-top: 10px;
+  color: white;
+  text-shadow: 2px 2px 3px #FFFFFF, 0 0 25px white, 0 0 5px #FFFFFF;
+}

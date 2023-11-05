@@ -1,0 +1,101 @@
+:root {
+  --themecolor0: #0d0e19;
+  --themecolor1: #161722;
+  --themecolor2: #25273c;
+  --themecolor3: #777a92;
+  --themecolor4: #cacde8;
+  --themecolor5: #e4e5f1;
+}
+
+body {
+  background: var(--themecolor1);
+}
+
+main {
+  background: var(--themecolor2);
+}
+
+p {
+  color: var(--themecolor5);
+}
+
+h1 {
+  color: var(--themecolor5);
+}
+
+h4 {
+  color: var(--themecolor4) !important;
+}
+
+a {
+  color: var(--themecolor4) !important;
+}
+
+.heading {
+  background: var(--themecolor3) !important;
+}
+
+.contact, .url-info, .table-section {
+  border: 2px solid var(--themecolor3) !important;
+}
+
+.comments-table {
+  border: 2px solid var(--themecolor3) !important;
+}
+
+.comments-table tr td {
+  background: var(--themecolor4) !important;
+}
+
+.comments-table p {
+  color: var(--themecolor1);
+}
+
+.profile-info .inner {
+  color: var(--themecolor5);
+}
+
+.profile-info {
+  border: 2px solid var(--themecolor4);
+}
+
+.details-table tr td {
+  background: var(--themecolor3) !important;
+  color: var(--themecolor5) !important;
+}
+
+.count {
+  color: var(--themecolor4);
+}
+
+footer, nav .top {
+  background: var(--themecolor2) !important;
+}
+
+nav .links {
+  background: var(--themecolor3);
+}
+
+.comment-replies {
+  border: 4px solid var(--themecolor5);
+}
+
+.container {
+  background: var(--themecolor2);
+}
+
+.searchButton {
+  background-color: var(--themecolor4) !important;
+  color: var(--themecolor1) !important;
+}
+
+header {
+  background: var(--themecolor0);
+  color: var(--themecolor5);
+}
+
+
+.search {
+  background-color: var(--themecolor0);
+  color: var(--themecolor5);
+}

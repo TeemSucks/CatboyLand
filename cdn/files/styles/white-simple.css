@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .headertext {
+    margin: 0;
+  }
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  nav ul li {
+    display: inline;
+    margin-right: 20px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: white;
+  }
+
+  .search {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .textbox {
+    padding: 10px;
+    width: 200px;
+  }
+
+  .searchButton {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .profileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .profilePicture img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  #profileUsername {
+    margin: 0;
+  }
+
+  #tag {
+    font-size: 12px;
+    color: #ffffff;
+  }
+
+  #profileStatus {
+    margin-top: 20px;
+  }
+
+  #profileDescription {
+    margin: 10px 0;
+  }
+
+  p, h1, h2, h3, div {
+    color: black;
+  }
+
+  .headertext {
+    border-bottom: 1px solid #7e7e7e;
+    padding-bottom: 10px;
+    color: white;
+  }
+
+  .textbox {
+    background-color: rgb(220, 220, 220);
+  }
+
+  .searchButton {
+    background-color: #b8b8b8;
+    color: black;
+  }

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CatboyLand - <%= reqUser.username %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="CatboyLand - <%= reqUser.username %>" property="og:title" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <meta content="Where the fun never starts! <%= reqUser.description %>" property="og:description" />
+  <meta content="https://9bv5rttd-3000.use.devtunnels.ms/reqUser/<%= reqUser.id %>" property="og:url" />
+  <meta content="/cdn/uploads/<%= reqUser.profilePicture %>" />
+  <meta content="#32a852" data-react-helmet="true" name="theme-color" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
+  <script src="../cdn/scripts/friends.js"></script>
+<style>
+    * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #222;
+    color: #fff;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1, h2 {
+    color: #fff;
+  }
+  
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  header {
+    background-color: #1a1a1a;
+    padding: 10px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  #messageForm textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    resize: vertical;
+  }
+  
+  #postButton {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  #postButton:hover {
+    background-color: #777;
+  }
+  
+  #messages {
+    margin-top: 20px;
+  }
+  
+  .message {
+    border: 1px solid #666;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #555;
+  }
+  
+  #myProfile {
+    margin-top: 40px;
+  }
+  
+  #myProfile h2 {
+    color: #fff;
+  }
+  
+  #myProfile div {
+    margin-bottom: 10px;
+  }
+  
+  #myProfile div#profileName {
+    font-weight: bold;
+  }
+  
+  #myProfile div#profileJoined {
+    font-size: 14px;
+  }
+
+  .profileContainer {
+  display: flex;
+  align-items: center;
+  padding-bottom: 3%;
+}
+
+.profilePicture {
+  margin-right: 15px; /* Adjust the spacing here */
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+}
+h3 {
+  margin-bottom: auto;
+}
+
+.search {
+  background-color: #1a1a1a;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.textbox {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #2d2d2d;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  resize: vertical;
+}
+
+::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.searchButton {
+  background-color: #2d2d2d;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.searchButton:hover {
+  background-color: #3a3a3a;
+}
+
+#tag {
+  margin-left: 8px;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+  background-color: <%= reqUser.tagColour %>;
+}
+
+.badgeContainer {
+background-color: #131313;
+}
+
+.badge {
+  padding-left: 3px;
+  padding-right: 3px;
+  margin: 5px;
+  pointer-events: none;
+}
+/* music */
+#message {
+  height: 100%;
+  position: fixed;
+}
+</style>
+<% if (reqUser.StyleFile) { %>
+  <link rel="stylesheet" href="/cdn/<%= reqUser.StyleFile %>">
+<% } %>
+<!--for music-->
+<div id="message"></div>
+<script>
+	(function (w, d, e, v, o, l, t){w['ToldWidget']=o; w[o]=w[o] || function (){(w[o].q=w[o].q || []).push(arguments);}; w[o].l=1 * new Date();l=document.createElement(e);t=document.getElementsByTagName(e)[0]; l.async=1; l.src=v; t.parentNode.insertBefore(l, t);})(window, document, 'script', 'https://scripts.told.club/sdk/sdk.js', 'told');
+	told('init', '6531c472a9fcd55646f0f7f9');
+</script>
+</head>
+<body>
+  <header>
+    <h1 class="headertext">CatboyLand</h1>
+    <nav>
+      <ul>
+        <% if (user) { %>
+          <li><a href="/">Home</a></li>
+          <li><a href="/profile">My Profile</a></li>
+          <li><a href="/friends">Friends</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/settings">Settings</a></li>
+          <li><a href="/api/logout">Logout</a></li>
+        <% } else { %>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/signup">Signup</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/tos">TOS</a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </header>
+<div class="search">
+  <h2 style="margin-top: auto;">User Search</h2>
+  <form action="/user" method="GET">
+    <input class="textbox" type="text" name="username" placeholder="Enter Username">
+    <button class="searchButton" type="submit">Search</button>
+  </form>
+</div>
+
+  <div class="container">
+    <% if (reqUser.html) { %>
+      <%- reqUser.html %>
+    <% } %>
+    <h1>User Profile</h1>
+   <!-- <% if (reqUser.badge) { %>
+      <div class="badgeContainer">
+        <% if (reqUser.badge.Halloween2023 === true) { %>
+          <div class="badge">
+            <img height="25" src="../cdn/files/badges/2023HalloweenBadge.svg"></img>
+          </div>
+        <% } %>
+      </div>
+      <% } %> -->
+    <div class="profileContainer">
+      <div class="profilePicture">
+        <% if (reqUser.profilePicture) { %>
+          <img style="width:64px; height:64px; border-radius: 50%; overflow: hidden;" src="/cdn/uploads/<%= reqUser.profilePicture %>" alt="Profile Picture" />
+        <% } else { %>
+          <img style="width:64px; height:64px; border-radius: 50%; overflow: hidden;" src="/cdn/files/pfp.jpg" alt="Profile Picture" />
+        <% } %>
+      </div>
+      <h2 id="profileusername"><%= reqUser.username %></h2>
+      <% if (reqUser.tag) { %>
+        <span id="tag"> <%= reqUser.tag %></span>
+      <% } %>
+    </div>
+    <% if (user && user._id != reqUser._id) { %>
+      <div class="friend-actions">
+        <% if (user.friends && user.friends.includes(reqUser._id)) { %>
+          <button onclick="removeFriend('<%= user._id %>','<%= reqUser._id %>')" class="friend-button">Remove Friend</button>
+        <% } else if (user.pendingFriendRequests && user.pendingFriendRequests.includes(reqUser._id)) { %>
+          <button onclick="acceptFriendRequest('<%= user._id %>','<%= reqUser._id %>')" class="friend-button">Accept Friend Request</button>
+        <% } else { %>
+          <button onclick="sendFriendRequest('<%= user._id %>','<%= reqUser._id %>')" class="friend-button">Send Friend Request</button>
+        <% } %>
+      </div>
+    <% } %>    
+    <dr />
+    <div id="profileStatus">Status: <%= reqUser.status %></div>
+    <h3>Description:</h3>
+    <% if (reqUser.description) { %>
+      <p id="profileDescription"><%= reqUser.description %></p>
+    <% } else { %>
+      <p id="profileDescription">Nothing here yet!</p>
+    <% } %>
+  </div>
+  
+  <% if (reqUser.StyleFile === "files/styles/spooky.css") { %>
+    <audio id="audiolol" autoplay loop>
+      <source id="audioSource" src="" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    <script src="/cdn/scripts/usermusic.js"></script>
+  <% } %>
+</body>
+</html>

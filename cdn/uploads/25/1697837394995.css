@@ -1,0 +1,185 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Fantasy', cursive;
+  margin: 0;
+  padding: 0;
+  background: url('https://www.enjpg.com/img/2020/genshin-impact-4-scaled-e1603714051110.jpg') center/cover no-repeat;
+  color: #ffcc00; /* Golden yellow text color */
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+h1, h2 {
+  color: #ffcc00;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #ff9900; /* Lighter yellow on hover */
+}
+
+header {
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+#messageForm textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffcc00;
+  border: none;
+  padding: 10px;
+  resize: vertical;
+}
+
+#postButton {
+  background-color: #9900cc; /* Purple button background */
+  color: #ffcc00;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+#postButton:hover {
+  background-color: #660099; /* Darker purple on hover */
+}
+
+#messages {
+  margin-top: 20px;
+}
+
+.message {
+  border: 1px solid #ff9900; /* Light orange border */
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#myProfile {
+  margin-top: 40px;
+}
+
+#myProfile h2 {
+  color: #ffcc00;
+}
+
+#myProfile div {
+  margin-bottom: 10px;
+}
+
+#myProfile div#profileName {
+  font-weight: bold;
+}
+
+#myProfile div#profileJoined {
+  font-size: 14px;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: center;
+  padding-bottom: 3%;
+}
+
+.profilePicture {
+  margin-right: 15px;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+h3 {
+  margin-bottom: auto;
+}
+
+.search {
+  background-color: rgba(0, 0, 0, 0.8);
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+.textbox {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffcc00;
+  border: none;
+  padding: 10px;
+  resize: vertical;
+}
+
+::placeholder {
+  color: #ff9900; /* Light orange placeholder text */
+  opacity: 1;
+}
+
+.searchButton {
+  background-color: #9900cc; /* Purple button background */
+  color: #ffcc00;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.searchButton:hover {
+  background-color: #660099; /* Darker purple on hover */
+}
+
+#tag {
+  margin-left: 8px;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffcc00;
+  border-radius: 4px;
+  background-color: #9900cc; /* Purple tag background */
+}
+
+.badgeContainer {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.badge {
+  padding-left: 3px;
+  padding-right: 3px;
+  margin: 5px;
+  pointer-events: none;
+}
+
+/* music */
+#message {
+  height: 100%;
+  position: fixed;
+}

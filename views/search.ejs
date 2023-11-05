@@ -1,0 +1,29 @@
+<!-- search-results.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Search Results</title>
+</head>
+<body>
+  <h1>User Search Results</h1>
+  
+  <% if (searchResults.length > 0) { %>
+    <ul>
+      <% searchResults.forEach(result => { %>
+        <li>
+          <a href="/user/<%= result.id %>"><%= result.username %></a>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No users found.</p>
+  <% } %>
+
+  <a href="/home">Back to Home</a>
+
+  <br />
+  <p>an image of liam because why not:</p>
+  <img height="500px" src="/retard"></img>
+</body>
+</html>

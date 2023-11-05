@@ -1,0 +1,11 @@
+* {
+  all: revert !important;
+}
+
+.search:before {
+  content: "I AM A ";
+}
+
+.search:after {
+  content: ", I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER";
+}

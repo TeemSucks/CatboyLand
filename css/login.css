@@ -1,0 +1,115 @@
+/* Global styles */
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #222;
+    color: #fff;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1, h2 {
+    color: #fff;
+  }
+  
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  header {
+    background-color: #1a1a1a;
+    padding: 10px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  /* Signup page */
+  #signupForm {
+    margin-top: 20px;
+  }
+  
+  #signupForm label {
+    display: block;
+    margin-bottom: 5px;
+    color: #fff;
+  }
+  
+  #signupForm input[type="text"],
+  #signupForm input[type="password"] {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  #signupForm button[type="submit"] {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  #signupForm button[type="submit"]:hover {
+    background-color: #777;
+  }
+  
+  /* Login page */
+  #loginForm {
+    margin-top: 20px;
+  }
+  
+  #loginForm label {
+    display: block;
+    margin-bottom: 5px;
+    color: #fff;
+  }
+  
+  #loginForm input[type="text"],
+  #loginForm input[type="password"] {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  #loginForm button[type="submit"] {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  #loginForm button[type="submit"]:hover {
+    background-color: #777;
+  }
+  

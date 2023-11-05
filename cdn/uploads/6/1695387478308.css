@@ -1,0 +1,11 @@
+* {
+  all: revert !important;
+}
+
+#tag:before {
+  content: "I AM A ";
+}
+
+#tag:after {
+  content: ", I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER, I AM A DEVELOPER";
+}
