@@ -797,7 +797,8 @@ app.post("/api/change-style", checkUserBanStatus, cors(), async (req, res) => {
       midnight: "files/styles/midnight.css",
       white: "files/styles/white-simple.css",
       idk: "files/styles/idkSomeThemeIg.css",
-      spooky: "files/styles/spooky.css",
+      //spooky: "files/styles/spooky.css",
+      snow: "files/styles/snow.css",
     };
 
     if (!styleFilePaths[selectedStyle]) {
