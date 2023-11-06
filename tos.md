@@ -50,7 +50,7 @@ c. Use CatboyLand for spamming, phishing, or any malicious activities.
 
 9. Contact Us
 
-9.1. If you have any questions, concerns, or feedback regarding this Agreement or CatboyLand, please contact us at breadmanlol@proton.me.
+9.1. If you have any questions, concerns, or feedback regarding this Agreement or CatboyLand, please contact us at `CatboyEXE@cock.li`.
 
 By using CatboyLand, you acknowledge that you have read, understood, and agreed to this Terms of Service Agreement.
 
