@@ -320,11 +320,32 @@ app.get("/login", async (req, res) => {
   res.render("login");
 });
 
-app.get("/", (req, res) => {
+function isNotBot(req, res, next) {
+  console.log(req.cookies); // Check the console for the cookies sent with the request
+  if (req.cookies.allowed === 'true') {
+    next();
+  } else {
+    res.redirect("/captcha_made_in_china");
+  }
+}
+
+app.get("/api/allow", async (req, res) => {
+  const oneWeekFromNow = new Date();
+  oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
+
+  res.cookie("allowed", 'true', { expires: oneWeekFromNow });
+  res.redirect("/home");
+});
+
+app.get("/captcha_made_in_china", (req, res) => {
+  res.render("captcha_made_in_china");
+})
+
+app.get("/", isNotBot, (req, res) => {
   res.redirect("signup");
 });
 
-app.post("/api/login", cors(), async (req, res) => {
+app.post("/api/login", isNotBot, cors(), async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -378,7 +399,7 @@ app.post("/api/login", cors(), async (req, res) => {
   }
 });
 
-app.get("/signup", async (req, res) => {
+app.get("/signup", isNotBot, async (req, res) => {
   const token = req.cookies.token;
 
   if (token) {
@@ -467,10 +488,6 @@ app.get("/settings/profile", checkUserBanStatus, async (req, res) => {
   }
 });
 
-app.get('/lmao', (req, res) => {
-  res.render('lol');
-});
-
 app.get("/settings/account", checkUserBanStatus, async (req, res) => {
   const token = req.cookies.token;
 
@@ -515,7 +532,7 @@ app.get("/settings/privacy", checkUserBanStatus, async (req, res) => {
   }
 });
 
-app.get("/blog", checkUserBanStatus, async (req, res) => {
+app.get("/blog", checkUserBanStatus, isNotBot, async (req, res) => {
     res.render("blog");
 });
 
@@ -952,7 +969,7 @@ app.get("/user", async (req, res) => {
   }
 });
 
-app.get("/user/:userId", checkUserBanStatus, async (req, res) => {
+app.get("/user/:userId", checkUserBanStatus, isNotBot, async (req, res) => {
   const userId = req.params.userId;
   const token = req.cookies.token;
 
@@ -1262,7 +1279,7 @@ app.get("/verify/:verificationString", async (req, res) => {
   }
 });*/
 
-app.get("/home", checkUserBanStatus, urlencodedParser, async (req, res) => {
+app.get("/home", checkUserBanStatus, urlencodedParser, isNotBot, async (req, res) => {
   const token = req.cookies.token;
 
   if (!token) {
