@@ -325,7 +325,7 @@ function isNotBot(req, res, next) {
   if (req.cookies.allowed === 'true') {
     next();
   } else {
-    res.redirect("/captcha_made_in_china");
+    res.redirect("/captcha");
   }
 }
 
@@ -337,7 +337,7 @@ app.get("/api/allow", async (req, res) => {
   res.redirect("/home");
 });
 
-app.get("/captcha_made_in_china", (req, res) => {
+app.get("/captcha", (req, res) => {
   res.render("captcha_made_in_china");
 })
 
