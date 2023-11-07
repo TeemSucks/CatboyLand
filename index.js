@@ -321,7 +321,6 @@ app.get("/login", async (req, res) => {
 });
 
 function isNotBot(req, res, next) {
-  console.log(req.cookies); // Check the console for the cookies sent with the request
   if (req.cookies.allowed === 'true') {
     next();
   } else {
