@@ -340,6 +340,10 @@ app.get("/captcha", (req, res) => {
   res.render("captcha_made_in_china");
 })
 
+app.get("/bot", (req, res) => {
+  res.render("errors/bot");
+})
+
 app.get("/", isNotBot, (req, res) => {
   res.redirect("signup");
 });
