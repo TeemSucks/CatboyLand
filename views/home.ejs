@@ -235,7 +235,11 @@ nav ul li {
         <div class="userProfile">
           <div class="profilePicture">
               <!-- Display the user's profile picture here -->
-              <img src="/cdn/uploads/<%= user.profilePicture %>" alt="Profile Picture">
+              <% if (user.profilePicture) { %>
+                <img src="/cdn/uploads/<%= user.profilePicture %>" alt="Profile Picture">
+                <% } else { %>
+                <img src="/cdn/files/pfp.jpg" alt="Profile Picture" />
+              <% } %>      
           </div>
           <!--<h2>Welcome, <%= user.username %></h2>-->
           <h2>Welcome, <%= user.username %>!</h2>
