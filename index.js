@@ -1146,6 +1146,7 @@ app.post("/api/signup", cors(), async (req, res) => {
       token,
       referal,
       AllowedIPs: [req.ip],
+      joinedTime: Date.getTime(),
     };
 
     await usersCollection.insertOne(newUser);
