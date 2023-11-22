@@ -87,15 +87,11 @@ app.use(express.static("public"));
 app.use(expressFavicon(__dirname + "/public/favicon.ico"));
 app.use(efp());
 app.use(express.json());
-// app.use(cors());
 app.use(cors(corsOptions));
 app.options('*', cors())
-// app.use(helmet());
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// app.use('/sw.js', express.static(__dirname + '/sw.js'));
-// const server = http.createServer(app);
 app.use(morgan(logFormat, { stream: accessLogStream }));
 
 app.set('trust proxy', 1);
@@ -997,7 +993,6 @@ app.get("/user/:userId", checkUserBanStatus, isNotBot, async (req, res) => {
   try {
     const reqUser = await usersCollection.findOne({ id: parseInt(userId) });
     const user = await usersCollection.findOne({ token });
-    // console.log(user)
 
     if (!reqUser) {
       return res.status(404).render("errors/404", { path: req.path, user });
@@ -1037,7 +1032,6 @@ app.post("/api/post-message", jsonParser, checkUserRateLimit, checkGlobalRateLim
       }
 
       const { messageContent } = req.body;
-      // console.log(messageContent);
 
       if (!messageContent) {
         return res
@@ -1125,16 +1119,13 @@ app.delete("/api/delete-message/:messageId", cors(), async (req, res) => {
   }
 });
 
-// /*
 app.post("/api/signup", cors(), async (req, res) => {
   try {
     const { username, password, referal } = req.body;
 
-    // Check if the username meets the criteria
     const usernameRegex = /^[a-z0-9_]{3,20}$/;
 
     if (!usernameRegex.test(username)) {
-      // Invalid username
       return res
         .status(400)
         .json({ success: false, message: "Invalid username format" });
@@ -1177,129 +1168,6 @@ app.post("/api/signup", cors(), async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
-// */
-
-/*app.post("/api/signup", cors(), async (req, res) => {
-  try {
-    const { username, password, email, referal } = req.body;
-
-    // Check if the username meets the criteria
-    const usernameRegex = /^[a-z0-9_]{3,20}$/;
-
-    if (!usernameRegex.test(username)) {
-      // Invalid username
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid username format" });
-    }
-
-    const userExists = await usersCollection.findOne({ username });
-
-    if (userExists) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Username already exists." });
-    }
-
-    const userCount = await usersCollection.countDocuments();
-
-    const id = userCount + 1;
-
-    const saltRounds = 15;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Generate a random 20-letter string for the verification link
-    const verificationString = crypto.randomBytes(10).toString('hex');
-
-    // Create a temporary link with a 15-minute expiration
-    const expirationTime = Date.now() + 15 * 60 * 1000; // 15 minutes in milliseconds
-    const verificationLink = `https://9bv5rttd-3000.use.devtunnels.ms/verify/${verificationString}`;
-
-    const token = generateToken(id, username, hashedPassword);
-
-    const newUser = {
-      id,
-      username,
-      password: hashedPassword,
-      token,
-      email,
-      referal,
-      verified: false,
-      verificationLink,
-      verificationExpires: expirationTime,
-    };
-
-    // Insert the user into the database
-    await usersCollection.insertOne(newUser);
-
-    // Send a verification email with the verification link
-    const transporter = nodemailer.createTransport({
-      service: 'ProtonMail',
-      host: 'smtp.protonmail.com',
-      port: 587, // ProtonMail's SMTP port
-      secure: false, // TLS    
-      auth: {
-        user: 'CatboyLand@proton.me',
-        pass: 'CBL_GmPJWUmzRZllXwqwuYXKDF8kSjxBsERs',
-      },
-    });
-
-    const mailOptions = {
-      from: 'CatboyLand@proton.me',
-      to: email,
-      subject: 'Email Verification',
-      text: `Click this link to verify your email\n${verificationLink}`,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending verification email:", error);
-        res.status(500).json({ success: false, message: "Internal server error" });
-      } else {
-        console.log('Verification email sent:', info.response);
-        res.cookie("token", token, { httpOnly: true });
-        res.redirect("/home");
-      }
-    });
-
-  } catch (error) {
-    console.error("Error during signup:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-});
-
-app.get("/verify/:verificationString", async (req, res) => {
-  try {
-    const verificationString = req.params.verificationString;
-
-    // Find the user with the matching verification link and not expired
-    const user = await usersCollection.findOne({
-      verificationLink: `https://yourwebsite.com/verify/${verificationString}`,
-      verificationExpires: { $gt: Date.now() }, // Check if not expired
-    });
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "Invalid verification link." });
-    }
-
-    // Update the user to mark them as verified and remove the verification link
-    await usersCollection.updateOne(
-      { _id: user._id },
-      {
-        $set: {
-          verified: true,
-          verificationLink: null,
-          verificationExpires: null,
-        },
-      }
-    );
-
-    res.json({ success: true, message: "Email verified successfully." });
-  } catch (error) {
-    console.error("Error during email verification:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-});*/
 
 app.get("/home", checkUserBanStatus, urlencodedParser, isNotBot, async (req, res) => {
   const token = req.cookies.token;
