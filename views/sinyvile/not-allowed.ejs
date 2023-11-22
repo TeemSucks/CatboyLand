@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWWWW A NORMAL PERSON</title>
+    <style>
+        * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #222;
+      color: #fff;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #333;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1, h2 {
+      color: #fff;
+    }
+    
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    header {
+      background-color: #1a1a1a;
+      padding: 10px;
+    }
+    
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    nav ul li {
+      display: inline;
+      margin-right: 10px;
+    }
+  
+          #signupForm {
+    margin-top: 20px;
+  }
+  
+  #signupForm label {
+    display: block;
+    margin-bottom: 5px;
+    color: #fff;
+  }
+  
+  #signupForm input[type="text"],
+  #signupForm input[type="password"] {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  #signupForm button[type="submit"] {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  #signupForm button[type="submit"]:hover {
+    background-color: #777;
+  }
+  
+  .signin {
+    text-decoration: underline;
+  }
+
+  .notification{background-color:#f5f5f5;border-radius:4px;position:relative;padding:1.25rem 2.5rem 1.25rem 1.5rem}.notification a:not(.button):not(.dropdown-item){color:currentColor;text-decoration:underline}.notification strong{color:currentColor}.notification code,.notification pre{background:#fff}.notification pre code{background:0 0}.notification>.delete{right:.5rem;position:absolute;top:.5rem}.notification .content,.notification .subtitle,.notification .title{color:currentColor}.notification.is-white{background-color:#fff;color:#0a0a0a}.notification.is-black{background-color:#0a0a0a;color:#fff}.notification.is-light{background-color:#f5f5f5;color:rgba(0,0,0,.7)}.notification.is-dark{background-color:#363636;color:#fff}.notification.is-primary{background-color:#00d1b2;color:#fff}.notification.is-primary.is-light{background-color:#ebfffc;color:#00947e}.notification.is-link{background-color:#485fc7;color:#fff}.notification.is-link.is-light{background-color:#eff1fa;color:#3850b7}.notification.is-info{background-color:#3e8ed0;color:#fff}.notification.is-info.is-light{background-color:#eff5fb;color:#296fa8}.notification.is-success{background-color:#48c78e;color:#fff}.notification.is-success.is-light{background-color:#effaf5;color:#257953}.notification.is-warning{background-color:#ffe08a;color:rgba(0,0,0,.7)}.notification.is-warning.is-light{background-color:#fffaeb;color:#946c00}.notification.is-danger{background-color:#f14668;color:#fff}.notification.is-danger.is-light{background-color:#feecf0;color:#cc0f35}
+      </style>  
+</head>
+<body>
+    <header>
+        <h1 href="/">CatboyLand</h1>
+        <nav>
+          <ul>
+            <% if (user) { %>
+              <li><a href="/">Home</a></li>
+              <li><a href="/profile">My Profile</a></li>
+              <li><a href="/friends">Friends</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/settings">Settings</a></li>
+              <li><a href="/api/logout">Logout</a></li>
+            <% } else { %>
+              <li><a href="/login">Login</a></li>
+              <li><a href="/signup">Signup</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/tos">TOS</a></li>
+            <% } %>
+          </ul>    
+    </header>
+    
+    <div class="container" style="overflow: hidden;">
+        <h2>Forbidden</h2>
+        <p>Oh no! It seems we cannot enter here, lets try another path. Maybe <a href="/home" style="text-decoration: underline;">/home</a>?</p>
+        <div>
+            <p>Dont worry, we can still get in.. we just need an invite code</p>
+            <form id="inviteForm" action="/api/sin/use-invite" method="post">
+                <label for="inviteCode">Invite Code:</label>
+                <input type="text" id="inviteCode" name="inviteCode">
+                <button type="submit" id="invite-button">Submit</button>
+            </form>
+        </div>
+        <dr />
+        <p><a style="cursor: pointer;" onclick="history.back()"><- back</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catboyland - sinyvile</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <meta content="Where the fun never starts!" property="og:description" />
+    <meta content="https://9bv5rttd-3000.use.devtunnels.ms/" property="og:url" />
+    <meta content="./cdn/files/logo.jpg" property="og:image" />
+    <meta content="#32a852" data-react-helmet="true" name="theme-color" />
+    <script src="../cdn/scripts/sin/post.js"></script>
+    <link type="text/css" rel="stylesheet" href="/public/sin.css" />
+    <style>
+        body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  header {
+    background-color: #222;
+    padding: 15px 0;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .headertext {
+    margin: 0;
+    font-size: 2em;
+    color: #2596e8;
+    text-shadow: 0 0 10px rgba(37, 150, 232, 0.8);
+  }
+  
+  nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-right: 15px;
+  }
+  
+  nav a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
+  }
+  
+  nav a:hover {
+    color: #2596e8;
+    text-shadow: 0 0 10px rgba(37, 150, 232, 0.8);
+  }
+  
+  .container {
+    background-color: #292929;
+    padding: 30px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 800px;
+  }
+  
+  .profileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profilePicture img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 3px solid #2596e8;
+    box-shadow: 0 0 15px rgba(37, 150, 232, 0.8);
+  }
+  
+  #profileusername {
+    margin: 0;
+    font-size: 2.5em;
+    color: #2596e8;
+    text-shadow: 0 0 10px rgba(37, 150, 232, 0.8);
+  }
+  
+  #tag {
+    color: #1a1a1a;
+    background-color: #2596e8;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(37, 150, 232, 0.8);
+  }
+  
+  .friend-actions {
+    margin-top: 30px;
+  }
+  
+  .friend-button {
+    background-color: #2596e8;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.6em;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+  
+  .friend-button:hover {
+    background-color: #1c7dbd;
+  }
+  
+  #profileStatus,
+  h3 {
+    color: #2596e8;
+    text-shadow: 0 0 10px rgba(37, 150, 232, 0.8);
+  }
+  
+  #profileDescription {
+    color: #e0e0e0;
+    font-size: 1.2em;
+    line-height: 1.5;
+  }
+  
+  .search {
+    background-color: #222;
+    padding: 30px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 800px;
+  }
+  
+  .textbox {
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+  }
+  
+  .searchButton {
+    background-color: #2596e8;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+  
+  .searchButton:hover {
+    background-color: #1c7dbd;
+  }
+
+  #messageForm textarea {
+  width: 97%;
+  margin-bottom: 10px;
+  background-color: #444;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  resize: vertical;
+  border-radius: 5px;
+}
+
+#postButton {
+  background-color: #2596e8;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+#postButton:hover {
+  background-color: #2182c7;
+}
+
+#messages {
+  margin-top: 20px;
+}
+
+#messageForm {
+  margin-bottom: 20px;
+}
+
+.message {
+  border: 1px solid #555;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #444;
+  border-radius: 5px;
+}
+
+.message .author {
+  font-weight: bold;
+}
+
+.message .tags {
+  background-color: #ccc;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.message .title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.message .content {
+  font-size: 1rem;
+}
+
+.message .content,
+.message .tags {
+  padding: 10px;
+}
+
+link {
+    color: #1c7dbd;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SinyVile :0</h1>
+        <nav>
+          <ul>
+            <li><a href="/sinyvile">Home</a></li>
+            <li><a href="/profile">My Profile</a></li>
+            <% if (user.id === 7 || user.id === 3) { %>
+                <li><a href="/sin/invites">Invites</a></li>
+            <% } %>  
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/api/logout">Logout</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <div class="container">
+        <noscript>
+          <div class="notification is-danger">
+            <strong>javascript is required</strong><br/>
+            Please enable javascript for this site to work properly.
+          </div>
+        </noscript>
+        <h2>Welcome to the catboy realm!</h2>
+        <div class="userProfile">
+          <div class="profilePicture">
+              <!-- Display the user's profile picture here -->
+              <% if (user.profilePicture) { %>
+                <img src="/cdn/uploads/<%= user.profilePicture %>" alt="Profile Picture">
+                <% } else { %>
+                <img src="/cdn/files/pfp.jpg" alt="Profile Picture" />
+              <% } %>      
+          </div>
+          <!--<h2>Welcome, <%= user.username %></h2>-->
+          <h2>Welcome, <%= user.username %>!</h2>
+          <br />
+      </div>
+      <div>siny is pro :0</div>
+      <br />
+      <br/>
+      <form id="messageForm">
+          <textarea id="messageInput" name="messageContent" rows="4" cols="50"></textarea>
+          <!--<input type="file" name="uploadFile" accept=".jpg, .jpeg, .png, .gif, .txt, .pdf">-->
+          <button onclick="location.reload()" id="postButton" type="button">Post</button>
+        </form>
+        <div id="messages">
+          <h3>Recent messages:</h3>
+          <div id="messageList">
+          <!-- Display posted messages here-->
+          <div id="messageList">
+              <% for (const message of recentMessages) { %>
+                  <div class="message">
+                      <div class="author">
+                          <div class="profilePicture">
+                              <!-- Display the author's profile picture here -->
+                              <a href="/user/<%= message.sender.id %>"><% if (message.sender.profilePicture) { %>
+                                <img src="/cdn/uploads/<%= message.sender.profilePicture %>" alt="Profile Picture">
+                              <% } else { %>
+                                  <!-- <script>
+                                    console.log('<%= JSON.stringify(message.sender) %>');
+                                  </script> -->
+                                <img src="/cdn/files/pfp.jpg" alt="Profile Picture">
+                                <% } %></a>
+                          </div>
+                          <a href="/user/<%= message.sender.id %>"><%= message.sender.username %><% if (message.sender.id === user.id) { %>
+                            <%=" (you)"%>
+                            <%}%>
+                            <span class="user-info-popup">
+                              <!-- User Information -->
+                              <!-- You can display user information here -->
+                              <%= message.sender.name %>, <%= message.sender.description %>
+                          </span>
+                          </a>:
+                      </div>
+                      <p style="font-size: small; color: #acacac;">
+                          <% if (message.timestamp) { %>
+                              <script src="../cdn/scripts/timestamp.js"></script>
+                          <% } else { %>
+                              No timestamp available
+                          <% } %>
+                      </p>
+                      <p class="content"><% if (typeof message.content === "string") { %>
+                        <%=message.content%>
+                      <%} else {%>
+                        <%-message.content.join("(newline)").replace( /(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>")%>
+                        <%}%>
+                      </p>
+                      <!-- <p><%=message.content%></p> -->
+                      <% if (user.id === 1 || message.sender.id === user.id) { %>
+                        <button class="button delete-button" data-message-id="<%= message._id %>">Delete</button>
+                    <% } %>
+                  </div>
+              <% } %>
+          </div>
+      </div>
+    </div>
+</body>
+</html>

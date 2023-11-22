@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invites</title>
+</head>
+<body>
+    <h1>Welcome, <%= user.username %>!</h1>
+    <button onclick="createInvite()">Create Invite</button>
+    <h2>Invites</h2>
+    <ul>
+        <% for (const invite of userInvites) { %>
+            <li>
+                Invite ID: <%= invite._id %><br>
+                Invite Code: <%= invite.code %><br>
+                Expires At: <%= invite.expiresAt %><br>
+                Made By: <%= invite.createdBy %><br>
+            </li>
+        <% } %>
+    </ul>
+    <script>
+            function createInvite() {
+                fetch('/api/generate-invite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + '<%= user.token %>'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Invite code created: ' + data.inviteCode);
+                    } else {
+                        alert('Failed to create invite code: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating invite:', error);
+                    alert('An error occurred while creating the invite.');
+                });
+            }
+    </script>
+</body>
+</html>

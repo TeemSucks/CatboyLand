@@ -111,6 +111,9 @@ const client = new MongoClient(uri, {
   },
 });
 
+let invitesCollection;
+
+
 async function ConectMongoDB() {
   try {
     await client.connect();
@@ -121,6 +124,8 @@ async function ConectMongoDB() {
     const db = client.db("CatboyLand");
     usersCollection = db.collection("Catboyland");
     PostCollection = db.collection("Catboyland-Posts");
+    SinPostCollection = db.collection("Sinyvile-Posts");
+    InvitesCollection = db.collection("Sin-Invites");
     BlogCollection = db.collection("Catboyland-Blog");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -128,6 +133,19 @@ async function ConectMongoDB() {
   }
 }
 ConectMongoDB().catch(console.dir);
+
+function generateUniqueInviteCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const codeLength = 8;
+  let inviteCode = '';
+
+  for (let i = 0; i < codeLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    inviteCode += characters.charAt(randomIndex);
+  }
+
+  return inviteCode;
+}
 
 const userRateLimit = {
   limit: 5,
@@ -1401,6 +1419,328 @@ app.get('/admin/logs', checkUserBanStatus, async (req, res) => {
 app.get("/api/logout", cors(), (req, res) => {
   res.clearCookie("token");
   res.redirect("/login");
+});
+
+/* sinyvile */
+
+app.get("/sinyvile", async (req, res) => {
+  res.redirect("/sinyvile/home");
+})
+
+app.get("/sinyvile/home", checkUserBanStatus, urlencodedParser, isNotBot, async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+  
+    if (!user.sin) {
+      return res.redirect("/sinyvile/not-allowed");
+    }
+
+    const profilePictureURL = `/cdn/uploads/${user.profilePicture}`;
+
+    const recentMessages = await SinPostCollection.find()
+      .sort({ timestamp: -1 })
+      .limit(25) // 20 messages on home page
+      .toArray();
+
+    recentMessages.forEach((message) => {
+      message.formattedDate = new Date(message.timestamp).toLocaleString();
+    });
+
+    res.render("sinyvile/home", { user, recentMessages });
+  } catch (error) {
+    console.error("Error checking token or retrieving messages:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/sin/post-message", jsonParser, checkUserRateLimit, checkGlobalRateLimit, cors(), async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized. Invalid token." });
+    }
+
+    if (!user.sin) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized. Not a sinyland member." });
+    }
+
+    const { messageContent } = req.body;
+    // console.log(messageContent);
+
+    if (!messageContent) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Message content is required." });
+    }
+
+    const message = {
+      timestamp: Date.now(),
+      content: messageContent.split("\n"),
+      sender: {
+        id: user.id,
+        messageid: user._id,
+        username: user.username,
+        profilePicture: user.profilePicture,
+      },
+    };
+
+    const result = await SinPostCollection.insertOne(message);
+
+    if (result.insertedCount === 1) {
+      res
+        .status(201)
+        .json({ success: true, message: "Message posted successfully." });
+    } else {
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to post message." });
+    }
+  } catch (error) {
+    console.error("Error posting message:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+}
+);
+
+app.delete("/api/sin/delete-message/:messageId", cors(), async (req, res) => {
+const token = req.cookies.token;
+const messageId = req.params.messageId;
+
+if (!token) {
+  return res
+    .status(401)
+    .json({ success: false, message: "Unauthorized. Token not found." });
+}
+
+try {
+  const messageObjectId = new ObjectId(messageId);
+  const user = await usersCollection.findOne({ token });
+
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Invalid token." });
+  }
+
+  const isAdmin = user.id === 1;
+  const message = await SinPostCollection.findOne({
+    _id: new ObjectId(messageId),
+  });
+
+  if (!message) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Message not found." });
+  }
+
+  if (!isAdmin && message.sender.id !== user.id) {
+    return res.status(403).json({
+      success: false,
+      message: "Unauthorized. You cannot delete this message.",
+    });
+  }
+
+  await SinPostCollection.deleteOne({ _id: new ObjectId(messageId) });
+
+  res
+    .status(204)
+    .json({ success: true, message: "Message deleted successfully." });
+} catch (error) {
+  console.error("Error deleting message:", error);
+  res.status(500).json({ success: false, message: "Internal server error" });
+}
+});
+
+app.post("/api/generate-invite", async (req, res) => {
+  const token = req.cookies.token;
+  const messageId = req.params.messageId;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized. Invalid token." });
+    }
+
+    if (!user.id === 1 || !user.id === 3 || !user.id === 7) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized. Only admins can generate invites." });
+    }
+    const userId = user.userId; // Assuming you have a user object with an ID
+    const currentMonth = new Date().getMonth();
+    /* const inviteCount = await invitesCollection.countDocuments({
+      createdBy: userId,
+      createdAt: { $gte: new Date(currentMonth) },
+    });
+
+    if (inviteCount >= 5) {
+      return res.status(403).json({ success: false, message: "Invite limit reached for this month" });
+    }*/
+
+    const inviteCode = generateUniqueInviteCode();
+
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await InvitesCollection.insertOne({
+      code: inviteCode,
+      createdBy: user.username,
+      createdAt: new Date(),
+      expiresAt,
+    });
+    
+    res.json({ success: true, inviteCode });
+  } catch (error) {
+    console.error("Error generating invite code:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/sinyvile/not-allowed", async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+  
+  try {
+  const user = await usersCollection.findOne({ token });
+
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Invalid token." });
+  }
+
+  res.render("sinyvile/not-allowed", {user});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/sin/use-invite", async (req,res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Unauthorized. Invalid token." });
+    }
+
+    // console.log('User:', user);
+      
+    const inviteCode = req.body.inviteCode;
+
+    if (!inviteCode) {
+        console.log('No invite code provided');
+        return res.status(400).json({ success: false, message: "Invite code is required" });
+    }
+    
+    const invite = await InvitesCollection.findOne({
+        code: inviteCode,
+        expiresAt: { $gt: new Date() },
+    });
+    
+    if (!invite) {
+        console.log('No invite found with code:', inviteCode);
+        return res.status(401).json({ success: false, message: "Invalid or expired invite code" });
+    }
+    
+    await usersCollection.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          sin: invite.code,
+        },
+      }
+    );
+
+    res.json({ success: true, message: "Invite code used successfully" });
+  } catch (error) {
+    console.error("Error using invite code:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+})
+
+app.get("/sin/invites", async (req, res) => {
+  const { messageId } = req.params;
+
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    if (!user.id === 1 || !user.id === 3 ||!user.id === 7) {
+      return res.redirect('/sinyvile/not-allowed');
+    }
+
+    if (!user.sin) {
+      return res.redirect("/sinyvile/not-allowed");
+    }
+
+    const userInvites = await InvitesCollection.find().sort({ expiresAt: -1 }).toArray();
+
+    res.render('sinyvile/invite', { user, userInvites });
+
+  } catch (error) {
+    console.error("Error fetching invites:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 });
 
 app.use(async (req, res, next) => {
