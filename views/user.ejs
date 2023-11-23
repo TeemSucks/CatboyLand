@@ -269,7 +269,7 @@ background-color: #131313;
         <% } %>
       </div>
     <% } %>    
-    <dr />
+    <br />
     <div id="profileStatus">Status: <%= reqUser.status %></div>
     <h3>Description:</h3>
     <% if (reqUser.description) { %>
@@ -277,8 +277,44 @@ background-color: #131313;
     <% } else { %>
       <p id="profileDescription">Nothing here yet!</p>
     <% } %>
+    <br />
+    <p>Joined:
+      <% if (user.joinedTime) { %>
+        <%= reqUser.joinedTime %>
+      <% } else { %>
+        Unknown
+      <% } %>
+    </p>
+
+    <div id="messageList">
+      <div id="messageList">
+          <% for (const message of recentMessages) { %>
+              <div class="message">
+                  <div class="author">
+                      <div class="profilePicture">
+                          <a href="/user/<%= message.sender.id %>"><% if (message.sender.profilePicture) { %>
+                            <img src="/cdn/uploads/<%= message.sender.profilePicture %>" alt="Profile Picture">
+                          <% } else { %>
+                            <img src="/cdn/files/pfp.jpg" alt="Profile Picture">
+                            <% } %></a>
+                      </div>
+                      <a href="/user/<%= message.sender.id %>"><%= message.sender.username %></a>:
+                  </div>
+                  <p class="content"><% if (typeof message.content === "string") { %>
+                    <%=message.content%>
+                  <%} else {%>
+                    <%-message.content.join("(newline)").replace( /(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>")%>
+                    <%}%>
+                  </p>
+                  <% if (user.id === 1 || user.id === 3 || message.sender.id === user.id) { %>
+                    <button class="button delete-button" data-message-id="<%= message._id %>">Delete</button>
+                <% } %>
+              </div>
+          <% } %>
+      </div>
+</div>
   </div>
-  
+  </div>
   <% if (reqUser.StyleFile === "files/styles/spooky.css") { %>
     <audio id="audiolol" autoplay loop>
       <source id="audioSource" src="" type="audio/mpeg">
