@@ -236,8 +236,8 @@
   padding: 10px;
 }
 
-link {
-    color: #1c7dbd;
+a {
+    color: #2596e8;
 }
     </style>
 </head>
@@ -264,7 +264,7 @@ link {
             Please enable javascript for this site to work properly.
           </div>
         </noscript>
-        <h2>Welcome to the catboy realm!</h2>
+        <h2>Welcome to the <span style="text-decoration: line-through;">catboy</span> siny realm!</h2>
         <div class="userProfile">
           <div class="profilePicture">
               <!-- Display the user's profile picture here -->
@@ -308,11 +308,6 @@ link {
                           <a href="/user/<%= message.sender.id %>"><%= message.sender.username %><% if (message.sender.id === user.id) { %>
                             <%=" (you)"%>
                             <%}%>
-                            <span class="user-info-popup">
-                              <!-- User Information -->
-                              <!-- You can display user information here -->
-                              <%= message.sender.name %>, <%= message.sender.description %>
-                          </span>
                           </a>:
                       </div>
                       <p style="font-size: small; color: #acacac;">
@@ -329,7 +324,7 @@ link {
                         <%}%>
                       </p>
                       <!-- <p><%=message.content%></p> -->
-                      <% if (user.id === 1 || message.sender.id === user.id) { %>
+                      <% if (user.id === 1 || user.id === 3 || user.id === 7 || message.sender.id === user.id) { %>
                         <button class="button delete-button" data-message-id="<%= message._id %>">Delete</button>
                     <% } %>
                   </div>

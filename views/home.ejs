@@ -211,6 +211,9 @@ nav ul li {
         <nav>
           <ul>
             <li><a href="/">Home</a></li>
+            <% if (user.sin) { %>
+              <li><a href="/sinyvile">SinyVile</a></li>
+            <% } %>
             <li><a href="/profile">My Profile</a></li>
             <li><a href="/friends">Friends</a></li>
             <li><a href="/blog">Blog</a></li>
@@ -249,7 +252,7 @@ nav ul li {
         <a href="/tos" style="font-weight: bold; text-decoration: underline;">TOS</a>, <a href="/privacy" style="font-weight: bold; text-decoration: underline;">Privacy Policy</a>
       </div>
       <br />
-      <p>You can find the source <a href="https://github.com/TeemSucks/CatboyLand" target="_blank" style="color:#3850b7;">here</a> :D</p>
+      <!--<p>You can find the source <a href="https://github.com/TeemSucks/CatboyLand" target="_blank" style="color:#3850b7;">here</a> :D</p>-->
       <!--<a rel="nofollow" href="https://www.buymeacoffee.com/TeemSucks" target="_blank"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a cat&emoji=🐈‍⬛&slug=TeemSucks&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>-->
       <br/>
       <form id="messageForm">
@@ -300,7 +303,7 @@ nav ul li {
                         <%}%>
                       </p>
                       <!-- <p><%=message.content%></p> -->
-                      <% if (user.id === 1 || message.sender.id === user.id) { %>
+                      <% if (user.id === 1 || user.id === 3 || message.sender.id === user.id) { %>
                         <button class="button delete-button" data-message-id="<%= message._id %>">Delete</button>
                     <% } %>
                   </div>

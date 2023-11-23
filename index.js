@@ -14,7 +14,7 @@ const crypto = require("crypto");
 const http = require('http');
 const winston = require("winston");
 var morgan = require('morgan')
-var rfs = require('rotating-file-stream')
+var rfs = require('rotating-file-stream');
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const nodemailer = require('nodemailer');
 require("dotenv").config();
@@ -64,6 +64,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 const uri = process.env.MONGODB_URI;
 
 let usersCollection;
+let InvitesCollection;
 
 const allowedOrigins = ['http://localhost:3000', 'https://9bv5rttd-3000.use.devtunnels.ms/home'];
 
@@ -106,8 +107,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
-let invitesCollection;
 
 
 async function ConectMongoDB() {
@@ -1415,7 +1414,7 @@ try {
       .json({ success: false, message: "Unauthorized. Invalid token." });
   }
 
-  const isAdmin = user.id === 1;
+  const isAdmin = user.id === 1 || user.id === 3 || user.id === 7;
   const message = await SinPostCollection.findOne({
     _id: new ObjectId(messageId),
   });
@@ -1539,13 +1538,10 @@ app.post("/api/sin/use-invite", async (req,res) => {
           .status(401)
           .json({ success: false, message: "Unauthorized. Invalid token." });
     }
-
-    // console.log('User:', user);
       
     const inviteCode = req.body.inviteCode;
 
     if (!inviteCode) {
-        console.log('No invite code provided');
         return res.status(400).json({ success: false, message: "Invite code is required" });
     }
     
@@ -1593,7 +1589,7 @@ app.get("/sin/invites", async (req, res) => {
       return res.redirect('/login');
     }
 
-    if (!user.id === 1 || !user.id === 3 ||!user.id === 7) {
+    if (!user.id === "1" || !user.id === "3" ||!user.id === "7") {
       return res.redirect('/sinyvile/not-allowed');
     }
 
