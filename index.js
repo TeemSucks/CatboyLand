@@ -1005,7 +1005,13 @@ app.get("/user/:userId", checkUserBanStatus, isNotBot, async (req, res) => {
       return res.status(404).render("errors/404", { path: req.path, user });
     }
 
-    res.render("user", { reqUser, user });
+    const recentMessages = await PostCollection
+      .find({ 'sender.id': reqUser.id })
+      .sort({ timestamp: -1 })
+      .limit(5)
+      .toArray();
+
+    res.render("user", { reqUser, user, recentMessages });
   } catch (error) {
     console.error("Error retrieving user information:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -1069,6 +1075,133 @@ app.post("/api/post-message", jsonParser, checkUserRateLimit, checkGlobalRateLim
   }
 );
 
+app.delete("/api/delete-reply/:messageId/:replyId", cors(), async (req, res) => {
+  const token = req.cookies.token;
+  const messageId = req.params.messageId;
+  const replyId = req.params.replyId;
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized. Invalid token." });
+    }
+
+    const isAdmin = user.id === 1 || user.id === 3 || user.id === 7;
+    const message = await PostCollection.findOne({
+      _id: new ObjectId(messageId),
+    });
+
+    if (!message) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Message not found." });
+    }
+
+    const replyToDelete = message.replies.find(
+      (reply) => reply._id.toString() === replyId
+    );
+
+    if (!replyToDelete) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Reply not found." });
+    }
+
+    if (!isAdmin && replyToDelete.sender.id !== user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized. You cannot delete this reply.",
+      });
+    }
+
+    await PostCollection.updateOne(
+      { _id: new ObjectId(messageId) },
+      {
+        $pull: {
+          replies: { _id: new ObjectId(replyId) },
+        },
+      }
+    );
+
+    res
+      .status(204)
+      .json({ success: true, message: "Reply deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting reply:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/reply/:messageId", jsonParser, checkUserRateLimit, checkGlobalRateLimit, cors(), async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+      return res.status(401).json({ success: false, message: "Unauthorized. Token not found." });
+  }
+
+  try {
+      const user = await usersCollection.findOne({ token });
+
+      if (!user) {
+          return res.status(401).json({ success: false, message: "Unauthorized. Invalid token." });
+      }
+
+      const { messageContent } = req.body;
+
+      if (!messageContent) {
+          return res.status(400).json({ success: false, message: "Message content is required." });
+      }
+
+      const messageId = req.params.messageId;
+      const parentMessage = await PostCollection.findOne({ _id: new ObjectId(messageId) });
+
+      if (!parentMessage) {
+        return res.status(404).json({ success: false, message: "Parent message not found." });
+      }
+
+      const reply = {
+          timestamp: Date.now(),
+          content: messageContent.split("\n"),
+          sender: {
+              id: user.id,
+              messageid: user._id,
+              username: user.username,
+              profilePicture: user.profilePicture,
+          },
+      };
+
+      const result = await PostCollection.updateOne(
+        { _id: new ObjectId(messageId) },
+        { $push: { replies: reply } }
+      );
+  
+      if (result.modifiedCount === 1) {
+          res.status(201).json({
+              success: true,
+              message: "Reply posted successfully.",
+              reply,
+          });
+      } else {
+          res.status(500).json({
+              success: false,
+              message: "Failed to post reply.",
+          });
+      }
+} catch (error) {
+      console.error("Error posting reply:", error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
 app.delete("/api/delete-message/:messageId", cors(), async (req, res) => {
   const token = req.cookies.token;
   const messageId = req.params.messageId;
@@ -1089,7 +1222,7 @@ app.delete("/api/delete-message/:messageId", cors(), async (req, res) => {
         .json({ success: false, message: "Unauthorized. Invalid token." });
     }
 
-    const isAdmin = user.id === 1;
+    const isAdmin = user.id === 1 || user.id === 3;
     const message = await PostCollection.findOne({
       _id: new ObjectId(messageId),
     });
@@ -1154,7 +1287,7 @@ app.post("/api/signup", cors(), async (req, res) => {
       token,
       referal,
       AllowedIPs: [req.ip],
-      joinedTime: Date.getTime(),
+      joinedTime: Date.now(),
     };
 
     await usersCollection.insertOne(newUser);

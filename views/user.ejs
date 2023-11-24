@@ -191,6 +191,17 @@ background-color: #131313;
   height: 100%;
   position: fixed;
 }
+
+.replies {
+  background-color: #777;
+  padding: 5px;
+}
+
+.reply {
+  margin-bottom: 10px;
+  background-color: #555;
+  padding: 15px;
+}
 </style>
 <% if (reqUser.StyleFile) { %>
   <link rel="stylesheet" href="/cdn/<%= reqUser.StyleFile %>">
@@ -286,26 +297,83 @@ background-color: #131313;
       <% } %>
     </p>
 
-    <div id="messageList">
+    <div id="messages">
+      <h3>Recent messages:</h3>
+      <div id="messageList">
+      <!-- Display posted messages here-->
       <div id="messageList">
           <% for (const message of recentMessages) { %>
-              <div class="message">
+              <div class="message" data-message-id="<%= message._id %>">
                   <div class="author">
                       <div class="profilePicture">
+                          <!-- Display the author's profile picture here -->
                           <a href="/user/<%= message.sender.id %>"><% if (message.sender.profilePicture) { %>
                             <img src="/cdn/uploads/<%= message.sender.profilePicture %>" alt="Profile Picture">
                           <% } else { %>
+                              <!-- <script>
+                                console.log('<%= JSON.stringify(message.sender) %>');
+                              </script> -->
                             <img src="/cdn/files/pfp.jpg" alt="Profile Picture">
                             <% } %></a>
                       </div>
-                      <a href="/user/<%= message.sender.id %>"><%= message.sender.username %></a>:
+                      <a href="/user/<%= message.sender.id %>"><%= message.sender.username %><% if (message.sender.id === user.id) { %>
+                        <%=" (you)"%>
+                        <%}%>
+                      </a>:
                   </div>
+                  <p style="font-size: small; color: #acacac;">
+                      <% if (message.timestamp) { %>
+                          <script src="../cdn/scripts/timestamp.js"></script>
+                      <% } else { %>
+                          No timestamp available
+                      <% } %>
+                  </p>
                   <p class="content"><% if (typeof message.content === "string") { %>
                     <%=message.content%>
                   <%} else {%>
                     <%-message.content.join("(newline)").replace( /(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>")%>
                     <%}%>
                   </p>
+                  <% if (message.replies) { %>
+                  <div class="replies">
+                    <% for (const reply of message.replies || []) { %>
+                        <div class="reply">
+                            <!-- Display reply information -->
+                            <div class="author">
+                                <!-- Similar to displaying the author's profile picture -->
+                                <a href="/user/<%= reply.sender.id %>">
+                                    <% if (reply.sender.profilePicture) { %>
+                                        <img src="/cdn/uploads/<%= reply.sender.profilePicture %>" alt="Profile Picture" class="profilePicture">
+                                    <% } else { %>
+                                        <img src="/cdn/files/pfp.jpg" alt="Profile Picture" class="profilePicture">
+                                    <% } %>
+                                </a>
+                                <a href="/user/<%= reply.sender.id %>">
+                                    <%= reply.sender.username %>
+                                    <% if (reply.sender.id === user.id) { %>
+                                        <%=" (you)"%>
+                                    <% } %>
+                                </a>:
+                            </div>
+                            <p class="content">
+                                <% if (typeof reply.content === "string") { %>
+                                    <%= reply.content %>
+                                <% } else { %>
+                                    <%= reply.content.join("(newline)").replace(/(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>") %>
+                                <% } %>
+                            </p>
+                        </div>
+                    <% } %>
+                </div>
+                <% } %>
+                  <button class="button reply-button" data-message-id="<%= message._id %>">Reply</button>
+                  <div class="reply-form" style="display: none;">
+                    <form class="reply-message-form">
+                      <textarea class="reply-message-input messageInput" name="replyContent" rows="2" cols="50"></textarea>
+                      <button class="button send-reply-button" type="button">Send</button>
+                    </form>
+                  </div>
+                  <!-- <p><%=message.content%></p> -->
                   <% if (user.id === 1 || user.id === 3 || message.sender.id === user.id) { %>
                     <button class="button delete-button" data-message-id="<%= message._id %>">Delete</button>
                 <% } %>
@@ -322,5 +390,53 @@ background-color: #131313;
     </audio>
     <script src="/cdn/scripts/usermusic.js"></script>
   <% } %>
+
+  <script>
+    document.querySelectorAll('.reply-button').forEach(button => {
+    button.addEventListener('click', () => {
+        // Hide all reply forms
+        document.querySelectorAll('.reply-form').forEach(form => {
+            form.style.display = 'none';
+        });
+    
+        // Show the clicked reply form
+        const replyForm = button.nextElementSibling;
+        replyForm.style.display = 'block';
+    });
+    });
+    
+    document.querySelectorAll('.send-reply-button').forEach(button => {
+    button.addEventListener('click', async () => {
+        const replyContent = button.previousElementSibling.value;
+        const messageId = button.closest('.message')?.dataset.messageId;
+    
+        if (messageId) {
+            try {
+                const response = await fetch(`/api/reply/${messageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ messageContent: replyContent }),
+                });
+    
+                const data = await response.json();
+    
+                if (data.success) {
+                    // Update the UI without a full page reload
+                    // (e.g., append the new reply to the DOM)
+                    location.reload();
+                } else {
+                    console.error('Failed to post reply:', data.message);
+                }
+            } catch (error) {
+                console.error('Error posting reply:', error);
+            }
+        } else {
+            console.error('Message ID is undefined. Unable to post reply.');
+        }
+    });
+    });
+    </script>    
 </body>
 </html>
