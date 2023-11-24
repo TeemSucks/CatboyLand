@@ -908,6 +908,7 @@ app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
   console.log("Sender User ID:", senderUserId);
 
   try {
+    // Find the user who is accepting the friend request
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
     if (!user) {
@@ -927,14 +928,148 @@ app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
     user.friends = user.friends || [];
     user.friends.push(senderUserId);
 
+    // Update the user who is accepting the friend request
     await usersCollection.updateOne(
       { _id: new ObjectId(userId) },
       { $set: { pendingFriendRequests: user.pendingFriendRequests, friends: user.friends } }
     );
 
+    // Find the user who sent the friend request
+    const senderUser = await usersCollection.findOne({ _id: new ObjectId(senderUserId) });
+
+    if (!senderUser) {
+      console.log("Sender user not found:", senderUserId);
+      return res.status(404).json({ success: false, message: "Sender user not found" });
+    }
+
+    // Add userId to the senderUser's friends list
+    senderUser.friends = senderUser.friends || [];
+    senderUser.friends.push(userId);
+
+    // Update the user who sent the friend request
+    await usersCollection.updateOne(
+      { _id: new ObjectId(senderUserId) },
+      { $set: { friends: senderUser.friends } }
+    );
+
     res.json({ success: true, message: "Friend request accepted" });
   } catch (error) {
     console.error("Error accepting friend request:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.post("/api/unfriend", jsonParser, async (req, res) => {
+  const userId = req.body.userId; // The user initiating the unfriending
+  const friendId = req.body.friendId; // The friend to be unfriended
+
+  if (!userId || !friendId) {
+    return res.status(400).json({ success: false, message: "Invalid request: userId and friendId are required" });
+  }
+
+  try {
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) {
+      console.log("User not found:", userId);
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Check if the friendId is in the user's friends list
+    if (!user.friends.includes(friendId)) {
+      return res.status(400).json({ success: false, message: "Friend not found in your friends list" });
+    }
+
+    // Remove friendId from the friends list
+    user.friends = user.friends.filter(id => id !== friendId);
+
+    await usersCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { friends: user.friends } }
+    );
+
+    res.json({ success: true, message: "Unfriended successfully" });
+  } catch (error) {
+    console.error("Error unfriending:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/friends/requests", checkUserBanStatus, async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    // Assuming you have a field in your user document for pendingFriendRequests
+    const friendRequestsIds = user.pendingFriendRequests || [];
+    
+    const friendRequests = [];
+    
+    for (const requestId of friendRequestsIds) {
+      const sender = await usersCollection.findOne({ _id: new ObjectId(requestId) });
+      if (sender) {
+        friendRequests.push({
+          _id: requestId,
+          sender: {
+            _id: sender._id,
+            username: sender.username,
+            // Add other fields you need
+          },
+        });
+      }
+    }
+
+    res.render("friends/requests", { user, friendRequests });
+  } catch (error) {
+    console.error("Error checking token in MongoDB:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/friends", checkUserBanStatus, async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    const friendsIds = user.friends || [];
+    const friends = [];
+    
+    for (const requestId of friendsIds) {
+      const friend = await usersCollection.findOne({ _id: new ObjectId(requestId) }); // Change this line
+      if (friend) {
+        friends.push({
+          _id: requestId,
+          friend: {
+            _id: friend._id,
+            id: friend.id,
+            profilePicture: friend.profilePicture,
+            username: friend.username,
+          },
+        });
+      }
+    }
+    
+    res.render("friends/friends", { user, friends });
+  } catch (error) {
+    console.error("Error checking token in MongoDB:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });

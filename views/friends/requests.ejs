@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatboyLand - Friend Requests</title>
+</head>
+<body>
+    <h1>Friend Requests</h1>
+
+    <% if (friendRequests.length > 0) { %>
+        <ul>
+            <% friendRequests.forEach(request => { %>
+                <li>
+                    <span><%= request.sender.username %></span>
+                    <button class="accept-button" data-request-id="<%= request._id %>" data-sender-id="<%= request.sender._id %>">Accept</button>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No friend requests</p>
+    <% } %>
+
+    <script>
+document.querySelectorAll('.accept-button').forEach(button => {
+    button.addEventListener('click', async () => {
+        const requestId = button.getAttribute('data-request-id');
+        const senderId = button.getAttribute('data-sender-id');
+
+        console.log('Request ID:', requestId);
+        console.log('Sender ID:', senderId);
+
+        try {
+            const response = await fetch('/api/accept-friendrequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: "<%= user._id %>", senderUserId: senderId }),
+            });
+
+            const data = await response.json();
+
+            console.log('Server Response:', data); // Add this line
+
+            if (data.success) {
+                console.log(data.message);
+                button.parentNode.remove();
+            } else {
+                console.error(data.message);
+            }
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+        }
+    });
+});
+    </script>
+</body>
+</html>
