@@ -5,21 +5,155 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CatboyLand - Friends List</title>
+    <style>
+      
+        * {
+          box-sizing: border-box;
+        }
+        
+        html {
+          background-color: #222;
+        }
+        
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #222;
+          color: #fff;
+        }
+        
+        .container {
+          max-width: 800px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #333;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2 {
+          color: #fff;
+        }
+        
+        a {
+          color: #fff;
+          text-decoration: none;
+        }
+        
+        a:hover {
+          text-decoration: underline;
+        }
+        
+        header {
+          background-color: #1a1a1a;
+          padding: 10px;
+        }
+        
+        nav ul {
+          list-style-type: none;
+          padding: 0;
+        }
+        
+        nav ul li {
+          display: inline;
+          margin-right: 10px;
+        }
+                
+        .button {
+          background-color: #4e4e4e;
+          color: #fff;
+          border: none;
+          padding: 10px 20px;
+          cursor: pointer;
+        }
+        
+        .button:hover {
+          background-color: #666;
+        }
+        
+        .userProfile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px; /* Add spacing between profile picture and username */
+        }
+        
+        .profilePicture {
+            margin-right: 15px; /* Adjust the spacing here */
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            overflow: hidden;
+            transform: translate(10%, 35%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border: #0a0a0a;
+        }
+        
+        .profilePicture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user {
+            background-color: #555;
+            padding: 5px;
+            margin: 5px;
+            width: 48%;
+            height: 125px;
+            display: inline-block;
+        }
+
+        /* notifications stolen fom bulma lmao */
+        .notification{background-color:#f5f5f5;border-radius:4px;position:relative;padding:1.25rem 2.5rem 1.25rem 1.5rem}.notification a:not(.button):not(.dropdown-item){color:currentColor;text-decoration:underline}.notification strong{color:currentColor}.notification code,.notification pre{background:#fff}.notification pre code{background:0 0}.notification>.delete{right:.5rem;position:absolute;top:.5rem}.notification .content,.notification .subtitle,.notification .title{color:currentColor}.notification.is-white{background-color:#fff;color:#0a0a0a}.notification.is-black{background-color:#0a0a0a;color:#fff}.notification.is-light{background-color:#f5f5f5;color:rgba(0,0,0,.7)}.notification.is-dark{background-color:#363636;color:#fff}.notification.is-primary{background-color:#00d1b2;color:#fff}.notification.is-primary.is-light{background-color:#ebfffc;color:#00947e}.notification.is-link{background-color:#485fc7;color:#fff}.notification.is-link.is-light{background-color:#eff1fa;color:#3850b7}.notification.is-info{background-color:#3e8ed0;color:#fff}.notification.is-info.is-light{background-color:#eff5fb;color:#296fa8}.notification.is-success{background-color:#48c78e;color:#fff}.notification.is-success.is-light{background-color:#effaf5;color:#257953}.notification.is-warning{background-color:#ffe08a;color:rgba(0,0,0,.7)}.notification.is-warning.is-light{background-color:#fffaeb;color:#946c00}.notification.is-danger{background-color:#f14668;color:#fff}.notification.is-danger.is-light{background-color:#feecf0;color:#cc0f35}
+    </style>
 </head>
 <body>
-    <h1>Friends List</h1>
+    <header>
+        <h1>CatboyLand</h1>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/profile">My Profile</a></li>
+            <li><a href="/friends">Friends</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <% if (user.id === 1) { %>
+              <li><a href="/admin">Admin Panel</a></li>
+            <% } %>
+            <li><a href="/api/logout">Logout</a></li>
+          </ul>
+        </nav>
+      </header>
 
-    <% if (friends.length > 0) { %>
-        <ul>
-            <% friends.forEach(friend => { %>
-                <li>
-                  <img src="/cdn/uploads/<%= friend.friend.profilePicture %>" alt="Profile picture" width="50px" height="50px"></img>
-                    <span><%= friend.friend.username %></span>
-                </li>
-            <% }); %>
-        </ul>
-    <% } else { %>
-        <p>No friends</p>
-    <% } %>
+      <div class="container">
+        <noscript>
+          <div class="notification is-danger">
+            <strong>javascript is required</strong><br/>
+            Please enable javascript for this site to work properly.
+          </div>
+        </noscript>
+
+        <h1>Friends List</h1>
+        <a href="/friends/requests" style="text-decoration: underline; background-color: #555; color: #fff; border: none; padding: 10px 20px; cursor: pointer; margin: 5px;">Friend requests</a>
+        <br>
+        <br>
+
+        <% if (friends.length > 0) { %>
+            <div class="users">
+                <% friends.sort((a, b) => a.friend.username.localeCompare(b.friend.username)).forEach(friend => { %>
+                    <div class="user">
+                        <% if (friend.friend.profilePicture) { %>
+                            <img src="/cdn/uploads/<%= friend.friend.profilePicture %>" alt="Profile picture" width="50px" height="50px" class="profilePicture"></img>
+                        <% } else { %>
+                            <img src="/cdn/files/pfp.jpg" alt="Profile picture" width="50px" height="50px" class="profilePicture"></img>
+                        <% } %>
+                        <a href="/user/<%= friend.friend.id %>"><%= friend.friend.username %></a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>No friends</p>
+        <% } %>
+    </div>
 </body>
 </html>

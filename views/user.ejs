@@ -269,6 +269,13 @@ background-color: #131313;
         <span id="tag"> <%= reqUser.tag %></span>
       <% } %>
     </div>
+    <% if (reqUser.sin) { %>
+      <% if (!reqUser.badgeVisibility) { %>
+        <span>Proud sinyvile member!</span>
+      <% } else if (!reqUser.badgeVisibility.sin === "visible") { %>
+        
+      <% } %>
+    <% } %>
     <% if (user && user._id != reqUser._id) { %>
       <div class="friend-actions">
         <% if (user.friends && user.friends.includes(reqUser._id)) { %>
@@ -299,21 +306,23 @@ background-color: #131313;
 
     <div id="messages">
       <h3>Recent messages:</h3>
-      <div id="messageList">
-      <!-- Display posted messages here-->
-      <div id="messageList">
+      <div id="loading" style="display: block; text-align: center;">
+        <br>
+        <img src="/cdn/files/Load.gif" alt="Loading..." width="100px"/>
+      </div>
+      <div id="messageList" style="display: none;">
           <% for (const message of recentMessages) { %>
               <div class="message" data-message-id="<%= message._id %>">
                   <div class="author">
                       <div class="profilePicture">
                           <!-- Display the author's profile picture here -->
                           <a href="/user/<%= message.sender.id %>"><% if (message.sender.profilePicture) { %>
-                            <img src="/cdn/uploads/<%= message.sender.profilePicture %>" alt="Profile Picture">
+                            <img src="/cdn/uploads/<%= message.sender.profilePicture %>" alt="Profile Picture" class="profilePicture">
                           <% } else { %>
                               <!-- <script>
                                 console.log('<%= JSON.stringify(message.sender) %>');
                               </script> -->
-                            <img src="/cdn/files/pfp.jpg" alt="Profile Picture">
+                            <img src="/cdn/files/pfp.jpg" alt="Profile Picture" class="profilePicture">
                             <% } %></a>
                       </div>
                       <a href="/user/<%= message.sender.id %>"><%= message.sender.username %><% if (message.sender.id === user.id) { %>
@@ -379,7 +388,6 @@ background-color: #131313;
                 <% } %>
               </div>
           <% } %>
-      </div>
 </div>
   </div>
   </div>
@@ -437,6 +445,28 @@ background-color: #131313;
         }
     });
     });
-    </script>    
+    </script>
+    <script>
+      function showMessages() {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('messageList').style.display = 'block';
+      }
+      
+      if (document.readyState === 'complete') {
+          showMessages();
+      } else {
+          window.onload = showMessages;
+      }
+      
+      document.addEventListener('DOMContentLoaded', async () => {
+          try {
+              await new Promise(resolve => setTimeout(resolve, 3000));
+      
+              showMessages();
+          } catch (error) {
+              console.error('Error loading messages:', error);
+          }
+      });  
+      </script>    
 </body>
 </html>

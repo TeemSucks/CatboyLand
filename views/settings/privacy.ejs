@@ -430,6 +430,20 @@ input[type="file"] + label .file-name {
             Please enable javascript for this site to work properly.
           </div>
         </noscript>
+
+        <form action="/api/sin/badge-visibility" method="post" enctype="multipart/form-data">
+          <select name="sin">
+            <% if (user.badgeVisibility.sin === 'visible') { %>
+              <option value="visible">visible</option>
+              <option value="hidden">hidden</option>
+            <% } else { %>
+              <option value="hidden">hidden</option>
+              <option value="visible">visible</option>
+            <% } %>
+          </select>
+          <button type="submit">Change SinyVile Badge Visibility</button>
+      </form>
+  
         <% if (successMessage) { %>
             <p><%= successMessage %></p>
         <% } %>    

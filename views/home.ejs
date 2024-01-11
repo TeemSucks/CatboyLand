@@ -203,12 +203,17 @@ nav ul li {
 .replies {
   background-color: #777;
   padding: 5px;
+  padding-bottom: 1px;
+  margin-bottom: 10px;
+  margin: 15px 0;
+  display: block;
 }
 
 .reply {
   margin-bottom: 10px;
   background-color: #555;
   padding: 15px;
+  display: block;
 }
 
         /* notifications stolen fom bulma lmao */
@@ -244,6 +249,10 @@ nav ul li {
             Please enable javascript for this site to work properly.
           </div>
         </noscript>
+        <div class="notification is-info download">
+          <strong>Desktop app is now released</strong><br/>
+          Download <a href="/download">here</a>
+        </div>
         <h2>Welcome to the catboy realm!</h2>
         <div class="userProfile">
           <div class="profilePicture">
@@ -259,7 +268,7 @@ nav ul li {
           <br />
       </div>
       <div>
-        <a href="/tos" style="font-weight: bold; text-decoration: underline;">TOS</a>, <a href="/privacy" style="font-weight: bold; text-decoration: underline;">Privacy Policy</a>
+        <a href="/tos" style="font-weight: bold; text-decoration: underline;">TOS</a>, <a href="/privacy" style="font-weight: bold; text-decoration: underline;">Privacy Policy</a><span class="download">, </span><a href="/download" style="font-weight: bold; text-decoration: underline;" class="download">Download</a>
       </div>
       <br />
       <!--<p>You can find the source <a href="https://github.com/TeemSucks/CatboyLand" target="_blank" style="color:#3850b7;">here</a> :D</p>-->
@@ -270,7 +279,11 @@ nav ul li {
           <!--<input type="file" name="uploadFile" accept=".jpg, .jpeg, .png, .gif, .txt, .pdf">-->
           <button onclick="location.reload()" id="postButton" type="button">Post</button>
         </form>
-        <div id="messages">
+        <div id="loading" style="display: block; text-align: center;">
+          <br>
+          <img src="/cdn/files/Load.gif" alt="Loading..." width="100px"/>
+        </div>  
+        <div id="messages" style="display: none;">
           <h3>Recent messages:</h3>
           <div id="messageList">
           <!-- Display posted messages here-->
@@ -315,7 +328,7 @@ nav ul li {
                       <% if (message.replies) { %>
                       <div class="replies">
                         <% for (const reply of message.replies || []) { %>
-                            <div class="reply">
+                            <div class="reply" data-reply-id="<%= reply._id %>">
                                 <!-- Display reply information -->
                                 <div class="author">
                                     <!-- Similar to displaying the author's profile picture -->
@@ -337,9 +350,12 @@ nav ul li {
                                     <% if (typeof reply.content === "string") { %>
                                         <%= reply.content %>
                                     <% } else { %>
-                                        <%= reply.content.join("(newline)").replace(/(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>") %>
+                                        <%- reply.content.join("(newline)").replace(/(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>") %>
                                     <% } %>
                                 </p>
+                                <% if (user.id === 1 || user.id === 3 || reply.sender.id === user.id) { %>
+                                  <button class="button reply-delete-button" data-reply-id="<%= reply._id %>">Delete</button>
+                              <% } %>
                             </div>
                         <% } %>
                     </div>
@@ -405,6 +421,64 @@ document.querySelectorAll('.send-reply-button').forEach(button => {
         }
     });
 });
+
+const replyButton = document.getElementById('.send-reply-button');
+replyButton.addEventListener('click', function () {
+  setTimeout(function () {
+    location.reload();
+}, 1000);
+});
+
+const replyDeleteButtons = document.querySelectorAll('.reply-delete-button');
+
+replyDeleteButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+        const messageId = button.getAttribute('data-message-id');
+        const replyID = button.getAttribute('data-reply-id');
+
+        try {
+            const response = await fetch(`/api/delete-reply/${messageId}/${replyID}`, {
+                method: 'DELETE',
+            }).then(response => location.reload());
+
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('Message deleted successfully.');
+                // You can update the UI to remove the deleted message here
+            } else {
+                console.error('Failed to delete message:', data.message);
+            }
+        } catch (error) {
+            console.error('Error deleting message:', error);
+        }
+        location.reload();
+        window.location.reload(true);
+    });
+});
     </script>
+
+<script>
+  function showMessages() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('messages').style.display = 'block';
+  }
+  
+  if (document.readyState === 'complete') {
+      showMessages();
+  } else {
+      window.onload = showMessages;
+  }
+  
+  document.addEventListener('DOMContentLoaded', async () => {
+      try {
+          await new Promise(resolve => setTimeout(resolve, 3000));
+  
+          showMessages();
+      } catch (error) {
+          console.error('Error loading messages:', error);
+      }
+  });  
+  </script>
   </body>
 </html>

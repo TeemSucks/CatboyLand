@@ -240,6 +240,22 @@ async function checkUserBanStatus(req, res, next) {
 
 app.set("view engine", "ejs");
 
+app.get("/download", function(req, res) {
+  res.render("download");
+});
+
+app.get("/download/win", function(req, res) {
+  res.download("./downloads/CatboyLandSetup.exe");
+});
+
+app.get("/download/mac", function(req, res) {
+  res.download("./downloads/CatboyLand.dmg");
+});
+
+app.get("/download/linux", function(req, res) {
+  res.download("./downloads/linux-unpacked.zip");
+});
+
 app.get("/not-aproved", async (req, res) => {
   const token = req.cookies.token;
 
@@ -854,6 +870,26 @@ app.post("/api/change-style", checkUserBanStatus, cors(), async (req, res) => {
   }
 });
 
+app.get("/api/get-friends/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!user) {
+      console.log("User not found:", userId);
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const friends = user.friends || [];
+
+    res.json({ success: true, friends });
+  } catch (error) {
+    console.error("Error getting user's friends:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
 app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
   const senderUserId = req.body.senderUserId;
   const recipientUserId = req.body.recipientUserId;
@@ -873,15 +909,22 @@ app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
       return res.status(404).json({ success: false, message: "Recipient user not found" });
     }
 
-    // Initialize pendingFriendRequests field if it's undefined
+    if (recipientUserId === senderUserId) return res.status(400).json({ success: false, message: "Cannot send friend request to yourself" });
+
     recipientUser.pendingFriendRequests = recipientUser.pendingFriendRequests || [];
 
-    // Check if the senderUserId is already in the pendingFriendRequests array
+    // if (!recipientUser.friends) {
+    //   recipientUser.friends = [];
+    // }
+    
+    // if (recipientUser.friends.includes(senderUserId)) {
+    //   return res.status(400).json({ success: false, message: "Users are already friends" });
+    // }
+    
     if (recipientUser.pendingFriendRequests.includes(senderUserId)) {
       return res.status(400).json({ success: false, message: "Friend request already exists" });
     }
 
-    // Add senderUserId to the pendingFriendRequests array
     recipientUser.pendingFriendRequests.push(senderUserId);
 
     await usersCollection.updateOne(
@@ -897,15 +940,15 @@ app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
 });
 
 app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
-  const userId = req.body.userId; // The user who is accepting the friend request
-  const senderUserId = req.body.senderUserId; // The user who sent the friend request
+  const userId = req.body.userId;
+  const senderUserId = req.body.senderUserId;
 
   if (!userId || !senderUserId) {
     return res.status(400).json({ success: false, message: "Invalid request: userId and senderUserId are required" });
   }
 
-  console.log("User ID:", userId);
-  console.log("Sender User ID:", senderUserId);
+  // console.log("User ID:", userId);
+  // console.log("Sender User ID:", senderUserId);
 
   try {
     // Find the user who is accepting the friend request
@@ -916,25 +959,24 @@ app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Check if the senderUserId is in the user's pendingFriendRequests
+    if (user.friends && user.friends.length >= 150) {
+      return res.status(400).json({ success: false, message: "Friend limit reached (200 friends)" });
+    }
+
     if (!user.pendingFriendRequests.includes(senderUserId)) {
       return res.status(400).json({ success: false, message: "Friend request not found" });
     }
 
-    // Remove senderUserId from pendingFriendRequests
     user.pendingFriendRequests = user.pendingFriendRequests.filter(id => id !== senderUserId);
 
-    // Add senderUserId to the friends list
     user.friends = user.friends || [];
     user.friends.push(senderUserId);
 
-    // Update the user who is accepting the friend request
     await usersCollection.updateOne(
       { _id: new ObjectId(userId) },
       { $set: { pendingFriendRequests: user.pendingFriendRequests, friends: user.friends } }
     );
 
-    // Find the user who sent the friend request
     const senderUser = await usersCollection.findOne({ _id: new ObjectId(senderUserId) });
 
     if (!senderUser) {
@@ -942,11 +984,9 @@ app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
       return res.status(404).json({ success: false, message: "Sender user not found" });
     }
 
-    // Add userId to the senderUser's friends list
     senderUser.friends = senderUser.friends || [];
     senderUser.friends.push(userId);
 
-    // Update the user who sent the friend request
     await usersCollection.updateOne(
       { _id: new ObjectId(senderUserId) },
       { $set: { friends: senderUser.friends } }
@@ -1140,6 +1180,24 @@ app.get("/user/:userId", checkUserBanStatus, isNotBot, async (req, res) => {
       return res.status(404).render("errors/404", { path: req.path, user });
     }
 
+    const friendsIds = reqUser.friends || [];
+    const friends = [];
+    
+    for (const requestId of friendsIds) {
+      const friend = await usersCollection.findOne({ _id: new ObjectId(requestId) }); // Change this line
+      if (friend) {
+        friends.push({
+          _id: requestId,
+          friend: {
+            _id: friend._id,
+            id: friend.id,
+            profilePicture: friend.profilePicture,
+            username: friend.username,
+          },
+        });
+      }
+    }
+
     const recentMessages = await PostCollection
       .find({ 'sender.id': reqUser.id })
       .sort({ timestamp: -1 })
@@ -1149,6 +1207,51 @@ app.get("/user/:userId", checkUserBanStatus, isNotBot, async (req, res) => {
     res.render("user", { reqUser, user, recentMessages });
   } catch (error) {
     console.error("Error retrieving user information:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get("/user/:userId/friends", checkUserBanStatus, async (req, res) => {
+  const token = req.cookies.token;
+  const userId = req.params.userId;
+
+  if (!token) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const user = await usersCollection.findOne({ token });
+    const reqUser = await usersCollection.findOne({ id: parseInt(userId) });
+
+    if (!reqUser) {
+      return res.status(404).render("errors/404", { path: req.path, user });
+    }
+
+    if (reqUser.banned === true) {
+      return res.status(404).render("errors/404", { path: req.path, user });
+    }
+
+    const friendsIds = reqUser.friends || [];
+    const friends = [];
+    
+    for (const requestId of friendsIds) {
+      const friend = await usersCollection.findOne({ _id: new ObjectId(requestId) }); // Change this line
+      if (friend) {
+        friends.push({
+          _id: requestId,
+          friend: {
+            _id: friend._id,
+            id: friend.id,
+            profilePicture: friend.profilePicture,
+            username: friend.username,
+          },
+        });
+      }
+    }
+    
+    res.render("user/friends", { user, reqUser, friends });
+  } catch (error) {
+    console.error("Error checking token in MongoDB:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
@@ -1873,6 +1976,52 @@ app.get("/sin/invites", async (req, res) => {
     console.error("Error fetching invites:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+});
+
+app.post('/api/sin/badge-visibility', async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized. Token not found." });
+  }
+  try {
+    const user = await usersCollection.findOne({ token });
+    const badgeVisibility = req.body;
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized. Invalid token." });
+    }
+    
+    if (!badgeVisibility) {
+      return res.status(400).json({ success: false, message: "Badge visibility is required" });
+    }
+    
+    await usersCollection.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          badgeVisibility: badgeVisibility,
+        },
+      }
+    );
+    
+    res.json({ success: true, message: "Badge visibility updated successfully" });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized. Invalid token." });
+    }
+  } catch (error) {
+    console.error("Error fetching user information:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+app.get('/bit', function(req, res) {
+  res.render('bitcounter');
 });
 
 app.use(async (req, res, next) => {

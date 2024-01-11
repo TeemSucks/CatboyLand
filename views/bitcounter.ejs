@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .bit-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bit {
+      width: 40px;
+      height: 40px;
+      margin: 0 5px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .bit.on {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .decimal-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: fixed;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .decimal-value {
+      text-align: 55%;
+      font-size: 20px;
+    }
+  </style>
+  <title>Bit Counter</title>
+</head>
+<body>
+  <div class="bit-container">
+    <script>
+      let bits = Array(8).fill(false);
+
+      function toggleBit(index) {
+        bits[index] = !bits[index];
+        updateView();
+        if (bits[index] && index > 0) {
+          toggleBit(index - 1);
+        }
+      }
+
+      function updateView() {
+        for (let i = 0; i < bits.length; i++) {
+          const bitElement = document.getElementById(`bit-${i}`);
+          bitElement.classList.toggle('on', !bits[i]);
+          bitElement.textContent = bits[i] ? '0' : '1';
+        }
+
+        const decimalValueElement = document.getElementById('decimal-value');
+        decimalValueElement.textContent = bitsToDecimal(bits);
+      }
+
+      function bitsToDecimal(bits) {
+        return parseInt(bits.map(bit => bit ? '0' : '1').join(''), 2);
+      }
+
+      function incrementCounter() {
+        toggleBit(bits.length - 1);
+      }
+
+      for (let i = 0; i < bits.length; i++) {
+        const bitElement = document.createElement('div');
+        bitElement.id = `bit-${i}`;
+        bitElement.className = 'bit';
+        bitElement.textContent = '1';
+
+        bitElement.addEventListener('click', () => {
+          toggleBit(i);
+        });
+
+        document.body.appendChild(bitElement);
+      }
+
+      const decimalContainer = document.createElement('div');
+      decimalContainer.className = 'decimal-container';
+      document.body.appendChild(decimalContainer);
+
+      decimalContainer.appendChild(document.createElement('br'));
+
+      const decimalValueElement = document.createElement('div');
+      decimalValueElement.id = 'decimal-value';
+      decimalValueElement.className = 'decimal-value';
+      decimalValueElement.textContent = '0';
+      decimalContainer.appendChild(decimalValueElement);
+
+      updateView();
+
+      setInterval(incrementCounter, 500);
+    </script>
+  </div>
+</body>
+</html>

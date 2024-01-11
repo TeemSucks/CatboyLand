@@ -32,5 +32,8 @@
     "socket.io": "^4.7.2",
     "stripe": "^13.6.0",
     "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "surge": "^0.23.1"
   }
 }
