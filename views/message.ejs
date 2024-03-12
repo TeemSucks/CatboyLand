@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatboyLand - message</title>
+</head>
+<body>
+    <h1>Message Details</h1>
+
+    <% if (success && message) { %>
+        <div>
+            <p><strong>Sender:</strong> <%= message.sender.username %></p>
+            <p><strong>Timestamp:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
+            
+            <% if (message.content) { %>
+                <p><strong>Content:</strong></p>
+                
+                <% if (typeof message.content === 'string') { %>
+                    <% const contentArray = message.content.split('\n'); %>
+                    <ul>
+                        <% contentArray.forEach(line => { %>
+                            <li><%= line %></li>
+                        <% }); %>
+                    </ul>
+                <% } else if (Array.isArray(message.content)) { %>
+                    <ul>
+                        <% message.content.forEach(line => { %>
+                            <li><%= line %></li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p><strong>Content:</strong> Unexpected content format.</p>
+                <% } %>
+
+            <% } else { %>
+                <p><strong>Content:</strong> No content available.</p>
+            <% } %>
+
+            <p><strong>View Count:</strong> <%= message.viewCount %></p>
+        </div>
+    <% } else { %>
+        <p>Error: <%= message %></p>
+    <% } %>
+</body>
+</html>

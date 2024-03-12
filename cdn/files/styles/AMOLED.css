@@ -1,0 +1,163 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #fff;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+h1, h2, h3 {
+    color: #fff;
+}
+
+a {
+    color: #66c0f4;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+header {
+    background-color: #1e1e1e;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+.search {
+    background-color: #1e1e1e;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.textbox {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #282828;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+::placeholder {
+    color: #555;
+    opacity: 1;
+}
+
+.searchButton {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.searchButton:hover {
+    background-color: #2e2e2e;
+}
+
+.profileContainer {
+    display: flex;
+    align-items: center;
+    padding-bottom: 3%;
+}
+
+.profilePicture {
+    margin-right: 15px;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+}
+
+.badgeContainer {
+    background-color: #1e1e1e;
+}
+
+.badge {
+    padding-left: 3px;
+    padding-right: 3px;
+    margin: 5px;
+    pointer-events: none;
+}
+
+#messages {
+    margin-top: 20px;
+    background-color: #1e1e1e;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.message {
+    border: 1px solid #333;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #282828;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.replies {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 10px;
+}
+
+.reply {
+    margin-bottom: 10px;
+    background-color: #282828;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.button:hover {
+    background-color: #444;
+}
+
+.delete-button {
+    background-color: #ff5555;
+    color: #fff;
+}

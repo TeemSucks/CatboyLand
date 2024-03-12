@@ -15,6 +15,8 @@ const http = require('http');
 const winston = require("winston");
 var morgan = require('morgan')
 var rfs = require('rotating-file-stream');
+const readline = require('readline');
+const { spawn } = require('child_process');
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const nodemailer = require('nodemailer');
 require("dotenv").config();
@@ -30,6 +32,54 @@ const logFormat = ":date[web] :remote-addr :remote-user :method :url HTTP/:http-
 
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function handleTerminalInput() {
+  console.log('Type "exit" to stop the server, "restart" to restart, or "eval" to evaluate code:');
+  rl.question('> ', (answer) => {
+    if (answer.toLowerCase() === 'exit') {
+      console.log('Stopping the server...');
+      rl.close();
+      process.exit(0);
+    } else if (answer.toLowerCase() === 'restart') {
+      console.log('Restarting the server...');
+      rl.close();
+      restartServer();
+    } else if (answer.toLowerCase() === 'eval') {
+      rl.question('> ', (code) => {
+        try {
+          const result = eval(code);
+          console.log('Evaluation result:', result);
+        } catch (error) {
+          console.error('Error during evaluation:', error);
+        } finally {
+          handleTerminalInput();
+        }
+      });
+    } else if (answer.toLowerCase() === 'clear') {
+      console.clear();
+      handleTerminalInput();
+    } else {
+      handleTerminalInput();
+    }
+  });
+}
+
+function restartServer() {
+  console.log('Server is restarting...');
+  rl.close();
+
+  const childProcess = spawn('node', ['index.js'], {
+    stdio: 'inherit',
+    detached: true,
+  });
+
+  childProcess.unref();
+  process.exit(0);
+}
 function getCurrentDate() {
   const now = new Date();
   const day = now.getDate().toString().padStart(2, "0");
@@ -65,6 +115,7 @@ const uri = process.env.MONGODB_URI;
 
 let usersCollection;
 let InvitesCollection;
+let postCollection;
 
 const allowedOrigins = ['http://localhost:3000', 'https://9bv5rttd-3000.use.devtunnels.ms/home'];
 
@@ -848,6 +899,7 @@ app.post("/api/change-style", checkUserBanStatus, cors(), async (req, res) => {
       idk: "files/styles/idkSomeThemeIg.css",
       //spooky: "files/styles/spooky.css",
       snow: "files/styles/snow.css",
+      amoled: "files/styles/AMOLED.css",
     };
 
     if (!styleFilePaths[selectedStyle]) {
@@ -890,18 +942,80 @@ app.get("/api/get-friends/:userId", async (req, res) => {
   }
 });
 
+/* unauthenticated */
+// app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
+//   const senderUserId = req.body.senderUserId;
+//   const recipientUserId = req.body.recipientUserId;
+
+//   if (!recipientUserId || !senderUserId) {
+//     return res.status(400).json({ success: false, message: "Invalid request: recipientUserId and senderUserId are required" });
+//   }
+
+//   // console.log("Sender User ID:", senderUserId);
+//   // console.log("Recipient User ID:", recipientUserId);
+
+//   try {
+//     const recipientUser = await usersCollection.findOne({ _id: new ObjectId(recipientUserId) });
+
+//     if (!recipientUser) {
+//       console.log("Recipient User not found:", recipientUserId);
+//       return res.status(404).json({ success: false, message: "Recipient user not found" });
+//     }
+
+//     if (recipientUserId === senderUserId) return res.status(400).json({ success: false, message: "Cannot send friend request to yourself" });
+
+//     recipientUser.pendingFriendRequests = recipientUser.pendingFriendRequests || [];
+
+//     // if (!recipientUser.friends) {
+//     //   recipientUser.friends = [];
+//     // }
+    
+//     // if (recipientUser.friends.includes(senderUserId)) {
+//     //   return res.status(400).json({ success: false, message: "Users are already friends" });
+//     // }
+    
+//     if (recipientUser.pendingFriendRequests.includes(senderUserId)) {
+//       return res.status(400).json({ success: false, message: "Friend request already exists" });
+//     }
+
+//     recipientUser.pendingFriendRequests.push(senderUserId);
+
+//     await usersCollection.updateOne(
+//       { _id: new ObjectId(recipientUserId) },
+//       { $set: { pendingFriendRequests: recipientUser.pendingFriendRequests } }
+//     );
+
+//     res.json({ success: true, message: "Friend request sent" });
+//   } catch (error) {
+//     console.error("Error sending friend request:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
+
 app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
   const senderUserId = req.body.senderUserId;
   const recipientUserId = req.body.recipientUserId;
+  const token = req.cookies.token; // Assuming token is in cookies
 
   if (!recipientUserId || !senderUserId) {
     return res.status(400).json({ success: false, message: "Invalid request: recipientUserId and senderUserId are required" });
   }
 
-  // console.log("Sender User ID:", senderUserId);
-  // console.log("Recipient User ID:", recipientUserId);
+  // Authentication check
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Unauthorized. Token not found." });
+  }
 
   try {
+    // Validate token and find the sender user
+    const senderUser = await usersCollection.findOne({ _id: new ObjectId(senderUserId), token });
+
+    if (!senderUser) {
+      console.log("Sender user not found or unauthorized:", senderUserId);
+      return res.status(401).json({ success: false, message: "Unauthorized. Sender user not found or invalid token." });
+    }
+
+    // Rest of your existing logic for sending friend requests
     const recipientUser = await usersCollection.findOne({ _id: new ObjectId(recipientUserId) });
 
     if (!recipientUser) {
@@ -913,14 +1027,6 @@ app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
 
     recipientUser.pendingFriendRequests = recipientUser.pendingFriendRequests || [];
 
-    // if (!recipientUser.friends) {
-    //   recipientUser.friends = [];
-    // }
-    
-    // if (recipientUser.friends.includes(senderUserId)) {
-    //   return res.status(400).json({ success: false, message: "Users are already friends" });
-    // }
-    
     if (recipientUser.pendingFriendRequests.includes(senderUserId)) {
       return res.status(400).json({ success: false, message: "Friend request already exists" });
     }
@@ -939,24 +1045,88 @@ app.post("/api/send-friendrequest", jsonParser, async (req, res) => {
   }
 });
 
+/* unauthenticated */
+// app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
+//   const userId = req.body.userId;
+//   const senderUserId = req.body.senderUserId;
+
+//   if (!userId || !senderUserId) {
+//     return res.status(400).json({ success: false, message: "Invalid request: userId and senderUserId are required" });
+//   }
+
+//   // console.log("User ID:", userId);
+//   // console.log("Sender User ID:", senderUserId);
+
+//   try {
+//     // Find the user who is accepting the friend request
+//     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+//     if (!user) {
+//       console.log("User not found:", userId);
+//       return res.status(404).json({ success: false, message: "User not found" });
+//     }
+
+//     if (user.friends && user.friends.length >= 150) {
+//       return res.status(400).json({ success: false, message: "Friend limit reached (200 friends)" });
+//     }
+
+//     if (!user.pendingFriendRequests.includes(senderUserId)) {
+//       return res.status(400).json({ success: false, message: "Friend request not found" });
+//     }
+
+//     user.pendingFriendRequests = user.pendingFriendRequests.filter(id => id !== senderUserId);
+
+//     user.friends = user.friends || [];
+//     user.friends.push(senderUserId);
+
+//     await usersCollection.updateOne(
+//       { _id: new ObjectId(userId) },
+//       { $set: { pendingFriendRequests: user.pendingFriendRequests, friends: user.friends } }
+//     );
+
+//     const senderUser = await usersCollection.findOne({ _id: new ObjectId(senderUserId) });
+
+//     if (!senderUser) {
+//       console.log("Sender user not found:", senderUserId);
+//       return res.status(404).json({ success: false, message: "Sender user not found" });
+//     }
+
+//     senderUser.friends = senderUser.friends || [];
+//     senderUser.friends.push(userId);
+
+//     await usersCollection.updateOne(
+//       { _id: new ObjectId(senderUserId) },
+//       { $set: { friends: senderUser.friends } }
+//     );
+
+//     res.json({ success: true, message: "Friend request accepted" });
+//   } catch (error) {
+//     console.error("Error accepting friend request:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
+
 app.post("/api/accept-friendrequest", jsonParser, async (req, res) => {
   const userId = req.body.userId;
   const senderUserId = req.body.senderUserId;
+  const token = req.cookies.token; // Assuming token is in cookies
 
   if (!userId || !senderUserId) {
     return res.status(400).json({ success: false, message: "Invalid request: userId and senderUserId are required" });
   }
 
-  // console.log("User ID:", userId);
-  // console.log("Sender User ID:", senderUserId);
+  // Authentication check
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Unauthorized. Token not found." });
+  }
 
   try {
-    // Find the user who is accepting the friend request
-    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    // Validate token and find the user who is accepting the friend request
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId), token });
 
     if (!user) {
-      console.log("User not found:", userId);
-      return res.status(404).json({ success: false, message: "User not found" });
+      console.log("User not found or unauthorized:", userId);
+      return res.status(401).json({ success: false, message: "Unauthorized. User not found or invalid token." });
     }
 
     if (user.friends && user.friends.length >= 150) {
@@ -1379,6 +1549,45 @@ app.delete("/api/delete-reply/:messageId/:replyId", cors(), async (req, res) => 
   }
 });
 
+app.get("/m/:messageId", async (req, res) => {
+  const messageId = req.params.messageId;
+
+  try {
+    const message = await PostCollection.findOne({ _id: new ObjectId(messageId) });
+
+    if (!message) {
+      return res.status(404).send("Message not found."); // Render an error page or handle as needed
+    }
+
+    await PostCollection.updateOne({ _id: new ObjectId(messageId) }, { $inc: { viewCount: 1 } });
+
+    res.render('message', { success: true, message });
+  } catch (error) {
+    console.error("Error retrieving message:", error);
+    res.status(500).send("Internal server error");
+  }
+});
+
+app.get("/api/view-message/:messageId", async (req, res) => {
+  const messageId = req.params.messageId;
+  const objectId = new ObjectId(messageId);
+
+  try {
+    const message = await PostCollection.findOne({ _id: objectId });
+
+    if (!message) {
+      return res.status(404).json({ success: false, message: "Message not found." });
+    }
+
+    await PostCollection.updateOne({ _id: objectId }, { $inc: { viewCount: 1 } });
+
+    res.status(200).json({ success: true, message });
+  } catch (error) {
+    console.error("Error retrieving message:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
 app.post("/api/reply/:messageId", jsonParser, checkUserRateLimit, checkGlobalRateLimit, cors(), async (req, res) => {
   const token = req.cookies.token;
 
@@ -1556,7 +1765,7 @@ app.get("/home", checkUserBanStatus, urlencodedParser, isNotBot, async (req, res
     const profilePictureURL = `/cdn/uploads/${user.profilePicture}`;
 
     const recentMessages = await PostCollection.find()
-      .sort({ timestamp: -1 })
+      .sort({ viewCount: -1, "replies.length": -1, timestamp: -1 })
       .limit(25) // 20 messages on home page
       .toArray();
 
@@ -2035,21 +2244,40 @@ app.use(async (req, res, next) => {
 });
 
 app.listen(port, () => {
+  handleTerminalInput();
   console.log(`Server is running on port ${port}`);
   logger.info(`Server started on port ${port}`);
-  // console.log("Direct link: http://eeeeeeee-36474.portmap.host:36474/");
 });
 
-process.on("SIGINT", async () => {
-  logger.info("Server closed connection");
-  try {
-    await client.close();
-    console.log("MongoDB connection closed");
-    logger.info("MongoDB connection closed");
-    process.exit(0);
-  } catch (error) {
-    console.error("Error closing MongoDB connection:", error);
-    logger.error("Error closing MongoDB connection:", error);
-    process.exit(1);
-  }
+// process.on("SIGINT", async () => {
+//   logger.info("Server closed connection");
+//   try {
+//     await client.close();
+//     console.log("MongoDB connection closed");
+//     logger.info("MongoDB connection closed");
+//     server.close(() => {
+//       console.log('Server has been stopped.');
+//       process.exit(0);
+//     });
+//     process.exit(0);
+//   } catch (error) {
+//     console.error("Error closing MongoDB connection:", error);
+//     logger.error("Error closing MongoDB connection:", error);
+//     process.exit(1);
+//   }
+// });
+
+process.on('SIGINT', () => {
+  console.log('Server is shutting down...');
+  client.close();
+  server.close(() => {
+    console.log('Server has been stopped.');
+    // Restart the entire process
+    const childProcess = spawn('node', ['index.js'], { stdio: 'inherit' });
+
+    childProcess.on('close', (code) => {
+      console.log(`Child process exited with code ${code}`);
+      process.exit(code);
+    });
+  });
 });
