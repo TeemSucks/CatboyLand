@@ -379,7 +379,7 @@ app.get("/privacy", async (req, res) => {
 });
 
 app.get("/log-example", async (req, res) => {
-  res.sendFile("./cdn/images/log-example.log");
+  res.download("./cdn/files/log-example.log");
 });
 
 app.get("/login", async (req, res) => {
@@ -1765,7 +1765,8 @@ app.get("/home", checkUserBanStatus, urlencodedParser, isNotBot, async (req, res
     const profilePictureURL = `/cdn/uploads/${user.profilePicture}`;
 
     const recentMessages = await PostCollection.find()
-      .sort({ viewCount: -1, "replies.length": -1, timestamp: -1 })
+      // .sort({ viewCount: -1, "replies.length": -1, timestamp: -1 })
+      .sort({ timestamp: -1 })
       .limit(25) // 20 messages on home page
       .toArray();
 

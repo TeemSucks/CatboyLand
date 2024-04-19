@@ -34,6 +34,6 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "surge": "^0.23.1"
+    "surge": "^0.0.0"
   }
 }

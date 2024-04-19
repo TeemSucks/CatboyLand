@@ -138,6 +138,7 @@ nav ul li {
 .message .content,
 .message .tags {
   padding: 10px;
+  overflow: auto !important;
 }
 
 .button {
@@ -320,9 +321,9 @@ nav ul li {
                           <% } %>
                       </p>
                       <p class="content"><% if (typeof message.content === "string") { %>
-                        <%=message.content%>
+                        <a href="/m/<%=message._id%>"><%=message.content%></a>
                       <%} else {%>
-                        <%-message.content.join("(newline)").replace( /(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>")%>
+                        <a href="/m/<%=message._id%>"><%-message.content.join("(newline)").replace( /(<([^>]+)>)/ig, '').replaceAll("(newline)", "<br/>")%></a>
                         <%}%>
                       </p>
                       <% if (message.replies) { %>
